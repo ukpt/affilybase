@@ -1,115 +1,132 @@
-import Logo from '../components/Logo'
+'use client'
+import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabase'
+
 export default function Affilie() {
-  return (
-    <div className="flex min-h-screen" style={{background: '#F5F0E8'}}>
+  const [code, setCode] = useState<any>(null)
+  const [vendeur, setVendeur] = useState<any>(null)
+  const [copied, setCopied] = useState(false)
+  const [copiedLink, setCopiedLink] = useState(false)
 
-      {/* Sidebar */}
-      <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
-        <div className="px-5 pb-6">
-      <Logo size="sm" />
-      </div>
-        <nav className="flex flex-col">
-          <div className="px-5 py-2 text-sm font-medium text-stone-900 bg-stone-100 border-l-2 border-stone-900 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-stone-900 inline-block"></span>
-            Mon tableau de bord
-          </div>
-          {['Mon code','Mes gains','Historique'].map(item => (
-            <div key={item} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
-              <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
-              {item}
-            </div>
-          ))}
-        </nav>
-        <div className="mt-auto px-5 pb-4">
-          <div className="text-xs text-stone-400 mb-1">Boutique partenaire</div>
-          <div className="text-sm font-medium text-stone-900">Sophie Créations</div>
-        </div>
-      </div>
+  useEffect(() => {
+    const init = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { window.location.href = '/login'; return }
 
-      {/* Main */}
-      <div className="flex-1 p-6">
+      const { data: affilieData } = await supabase
+        .from('affilies')
+        .select('*, codes(*), vendeurs(*)')
+        .eq('email', user.email)
+        .single()
 
-        {/* Topbar */}
-        <div className="mb-6">
-          <h1 className="text-base font-medium text-stone-900">Bonjour, Marie</h1>
-          <p className="text-xs text-stone-500 mt-0.5">Voici l'état de votre programme d'affiliation</p>
-        </div>
+      if (affilieData) {
+        setCode(affilieData.codes)
+        setVendeur(affilieData.vendeurs)
+      }
+    }
+    init()
+  }, [])
 
-        {/* Métriques */}
-        <div className="grid grid-cols-3 gap-2.5 mb-5">
-          {[
-            {label: 'Gains totaux', value: '144 €', sub: '+32 € ce mois', green: true},
-            {label: 'En attente de paiement', value: '144 €', sub: 'Paiement sous 7 jours', green: false},
-            {label: 'Ventes générées', value: '18', sub: 'depuis le début', green: false},
-          ].map(m => (
-            <div key={m.label} className="bg-white border border-stone-200 rounded-lg p-3.5">
-              <div className="text-xs text-stone-400 mb-1.5">{m.label}</div>
-              <div className="text-2xl font-medium text-stone-900">{m.value}</div>
-              <div className={`text-xs mt-1 ${m.green ? 'text-green-700' : 'text-stone-500'}`}>{m.sub}</div>
-            </div>
-          ))}
-        </div>
+  const lienAffiliation = code ? `${vendeur?.shopify_url}?ref=${code.code}` : ''
 
-        {/* Mon code */}
-        <h2 className="text-sm font-medium text-stone-900 mb-3">Mon code d'affiliation</h2>
-        <div className="bg-white border border-stone-200 rounded-xl p-5 mb-5">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="text-xs text-stone-400 mb-1.5">Votre code personnel</div>
-              <div className="text-4xl font-medium text-stone-900 font-mono tracking-widest">MARIE20</div>
-            </div>
-            <button className="text-xs font-medium bg-stone-900 text-white px-3 py-1.5 rounded cursor-pointer">Copier le code</button>
-          </div>
-          <div className="grid grid-cols-2 gap-2.5">
-            <div className="rounded-lg p-3" style={{background:'#F5F0E8'}}>
-              <div className="text-xs text-stone-500 mb-1">Remise offerte à l'acheteur</div>
-              <div className="text-xl font-medium text-stone-900">20%</div>
-              <div className="text-xs text-stone-400 mt-1">sur toute la boutique</div>
-            </div>
-            <div className="rounded-lg p-3" style={{background:'#F5F0E8'}}>
-              <div className="text-xs text-stone-500 mb-1">Ma commission par vente</div>
-              <div className="text-xl font-medium text-stone-900">10%</div>
-              <div className="text-xs text-stone-400 mt-1">du montant de la commande</div>
-            </div>
-          </div>
-        </div>
+  const copyCode = () => {
+    navigator.clipboard.writeText(code?.code || '')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
 
-        {/* Partage */}
-        <h2 className="text-sm font-medium text-stone-900 mb-3">Partager mon code</h2>
-        <div className="bg-white border border-stone-200 rounded-xl p-4 mb-5">
-          <div className="flex gap-2 flex-wrap">
-            {['Copier le lien','Instagram','TikTok','WhatsApp','Email'].map(btn => (
-              <button key={btn} className="text-xs text-stone-900 bg-stone-100 border border-stone-200 px-3 py-1.5 rounded cursor-pointer hover:bg-stone-200">
-                {btn}
-              </button>
-            ))}
-          </div>
-        </div>
+  const copyLink = () => {
+    navigator.clipboard.writeText(lienAffiliation)
+    setCopiedLink(true)
+    setTimeout(() => setCopiedLink(false), 1500)
+  }
 
-        {/* Historique */}
-        <h2 className="text-sm font-medium text-stone-900 mb-3">Historique des ventes</h2>
-        <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
-          {[
-            {date:'21 avril 2026', commande:'Commande #1082', panier:'80 €', commission:'+8 €', paid: false},
-            {date:'18 avril 2026', commande:'Commande #1071', panier:'120 €', commission:'+12 €', paid: false},
-            {date:'12 avril 2026', commande:'Commande #1058', panier:'60 €', commission:'+6 €', paid: true},
-            {date:'5 avril 2026', commande:'Commande #1044', panier:'200 €', commission:'+20 €', paid: true},
-          ].map((h, i, arr) => (
-            <div key={h.commande} className={`flex items-center gap-2.5 px-4 py-2.5 ${i < arr.length-1 ? 'border-b border-stone-100' : ''}`}>
-              <div className="text-xs text-stone-400 w-28">{h.date}</div>
-              <div className="flex-1">
-                <div className="text-sm text-stone-900">{h.commande}</div>
-                <div className="text-xs text-stone-400">Panier : {h.panier} · Remise 20% appliquée</div>
-              </div>
-              <div className="text-sm font-medium text-green-700">{h.commission}</div>
-              <span className={`text-xs px-2 py-0.5 rounded ${h.paid ? 'bg-green-50 text-green-700' : 'bg-stone-100 text-stone-500'}`}>
-                {h.paid ? 'Payé' : 'En attente'}
-              </span>
-            </div>
-          ))}
-        </div>
-
-      </div>
+  if (!code) return (
+    <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Georgia, serif', color: '#888' }}>
+      Chargement...
     </div>
+  )
+
+  return (
+    <main style={{ minHeight: '100vh', background: '#F5F2EC', fontFamily: 'Georgia, serif', color: '#1a1a1a', padding: '1.5rem', maxWidth: '600px', margin: '0 auto' }}>
+
+      {/* HEADER */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+        <div>
+          <p style={{ fontSize: '18px', fontWeight: 500 }}>Mon espace affilié</p>
+          <p style={{ fontSize: '13px', color: '#888' }}>Boutique : <span style={{ fontWeight: 500, color: '#1a1a1a' }}>{vendeur?.nom || vendeur?.email || 'Votre boutique'}</span></p>
+        </div>
+        <div style={{ fontSize: '12px', color: '#888', textAlign: 'right' }}>
+          Commission : <span style={{ fontWeight: 500, color: '#1a1a1a' }}>{code.commission_pct}% par vente</span>
+        </div>
+      </div>
+
+      {/* STATS */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px', marginBottom: '1.25rem' }}>
+        {[
+          { label: 'Ventes générées', value: '—', sub: '' },
+          { label: 'Clics sur le lien', value: '—', sub: '' },
+          { label: 'Commissions gagnées', value: '—', sub: '' },
+        ].map(({ label, value, sub }, i) => (
+          <div key={i} style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '8px', padding: '1rem' }}>
+            <div style={{ fontSize: '12px', color: '#888', marginBottom: '6px' }}>{label}</div>
+            <div style={{ fontSize: '22px', fontWeight: 500 }}>{value}</div>
+            {sub && <div style={{ fontSize: '12px', color: '#2D9B6F', marginTop: '4px' }}>{sub}</div>}
+          </div>
+        ))}
+      </div>
+
+      {/* COMMISSION EN ATTENTE */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#E1F5EE', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '1.25rem' }}>
+        <span style={{ fontSize: '13px', color: '#085041' }}>Commission en attente</span>
+        <span style={{ fontSize: '18px', fontWeight: 500, color: '#0F6E56' }}>—</span>
+      </div>
+
+      {/* CODE PROMO */}
+      <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1.25rem' }}>
+        <div style={{ fontSize: '12px', color: '#888', marginBottom: '10px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Ton code promo</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ fontSize: '36px', fontWeight: 500, letterSpacing: '0.08em', background: '#F5F2EC', borderRadius: '8px', padding: '0.75rem 1.5rem', flex: 1, textAlign: 'center', border: '2px dashed #ddd8ce' }}>
+            {code.code}
+          </div>
+          <button onClick={copyCode} style={{ background: '#2D9B6F', color: '#fff', border: 'none', borderRadius: '8px', padding: '0.75rem 1.25rem', fontSize: '14px', fontWeight: 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            {copied ? 'Copié !' : 'Copier le code'}
+          </button>
+        </div>
+        <div style={{ fontSize: '12px', color: '#888', marginBottom: '10px' }}>Ton lien d'affiliation</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#F5F2EC', borderRadius: '8px', padding: '0.6rem 1rem' }}>
+          <span style={{ fontSize: '13px', color: '#2D9B6F', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lienAffiliation}</span>
+          <button onClick={copyLink} style={{ fontSize: '12px', color: '#555', border: '0.5px solid #ddd8ce', background: '#fff', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            {copiedLink ? 'Copié !' : 'Copier'}
+          </button>
+        </div>
+      </div>
+
+      {/* PARTAGE */}
+      <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem' }}>
+        <div style={{ fontSize: '14px', fontWeight: 500, marginBottom: '12px' }}>Partager rapidement</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '10px' }}>
+          {[
+            { label: 'Story Instagram', color: '#E4405F', href: `https://www.instagram.com/` },
+            { label: 'TikTok', color: '#000', href: `https://www.tiktok.com/` },
+            { label: 'Facebook', color: '#1877F2', href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(lienAffiliation)}` },
+            { label: 'WhatsApp', color: '#25D366', href: `https://wa.me/?text=${encodeURIComponent('Utilise mon code ' + code.code + ' sur ' + lienAffiliation)}` },
+          ].map(({ label, color, href }, i) => (
+            <a key={i} href={href} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#F5F2EC', border: '0.5px solid #ddd8ce', borderRadius: '8px', padding: '0.6rem 1rem', fontSize: '13px', color: '#1a1a1a', textDecoration: 'none' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, flexShrink: 0 }} />
+              {label}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* DECONNEXION */}
+      <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+        <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login' }} style={{ fontSize: '12px', color: '#888', background: 'none', border: 'none', cursor: 'pointer' }}>
+          Se déconnecter
+        </button>
+      </div>
+
+    </main>
   )
 }
