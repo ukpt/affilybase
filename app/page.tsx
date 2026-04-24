@@ -2,6 +2,7 @@
 import Logo from './components/Logo'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from './lib/supabase'
 
 type Code = {
@@ -20,6 +21,7 @@ type Vendeur = {
 }
 
 export default function Dashboard() {
+  const router = useRouter()
   const [codes, setCodes] = useState<Code[]>([])
   const [vendeur, setVendeur] = useState<Vendeur | null>(null)
   const [loading, setLoading] = useState(true)
@@ -28,7 +30,7 @@ export default function Dashboard() {
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { window.location.href = '/login'; return }
+      if (!user) { window.location.href = '/landing'; return }
       setUserEmail(user.email || '')
 
       const { data: v } = await supabase
