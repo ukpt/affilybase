@@ -6,17 +6,23 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default async function RedirectCode({ params }: { params: { code: string } }) {
+type Props = {
+  params: { code: string }
+}
+
+export default async function RedirectCode({ params }: Props) {
+  const code = params.code.toUpperCase()
+
   const { data } = await supabase
     .from('codes')
     .select('*, vendeurs(*)')
-    .eq('code', params.code.toUpperCase())
+    .eq('code', code)
     .single()
 
-  if (!data || !data.vendeurs?.shopify_url) {
-    redirect('/')
-  }
+  if (!data) redirect('/landing')
+  
+  const shopifyUrl = data.vendeurs?.shopify_url
+  if (!shopifyUrl) redirect('/landing')
 
-  const url = `${data.vendeurs.shopify_url}?discount=${params.code.toUpperCase()}`
-  redirect(url)
+  redirect(`${shopifyUrl}?discount=${code}`)
 }
