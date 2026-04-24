@@ -31,6 +31,13 @@ export default function Dashboard() {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/landing'; return }
+      const { data: affilieCheck } = await supabase
+  .from('affilies')
+  .select('id')
+  .eq('email', user.email)
+  .single()
+
+if (affilieCheck) { window.location.href = '/affilie'; return }
       setUserEmail(user.email || '')
 
       const { data: v } = await supabase
