@@ -14,15 +14,27 @@ export default function Affilie() {
       if (!user) { window.location.href = '/login'; return }
 
       const { data: affilieData } = await supabase
-        .from('affilies')
-        .select('*, codes(*), vendeurs(*)')
-        .eq('email', user.email)
-        .single()
+  .from('affilies')
+  .select('*')
+  .eq('email', user.email)
+  .single()
 
-      if (affilieData) {
-        setCode(affilieData.codes)
-        setVendeur(affilieData.vendeurs)
-      }
+if (affilieData) {
+  const { data: codeData } = await supabase
+    .from('codes')
+    .select('*')
+    .eq('affilie_id', affilieData.id)
+    .single()
+
+  const { data: vendeurData } = await supabase
+    .from('vendeurs')
+    .select('*')
+    .eq('id', affilieData.vendeur_id)
+    .single()
+
+  setCode(codeData)
+  setVendeur(vendeurData)
+}
     }
     init()
   }, [])
