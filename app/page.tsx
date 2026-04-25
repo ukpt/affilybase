@@ -84,7 +84,7 @@ export default function Dashboard() {
             <span className="w-1.5 h-1.5 rounded-full bg-stone-900 inline-block"></span>
             Tableau de bord
           </div>
-          {['Mes codes','Affiliés','Paiements','Paramètres'].map(item => (
+          {['Mes codes','Affiliés','Stats','Paiements','Paramètres'].map(item => (
             <div key={item} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
               <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
               {item}
@@ -138,7 +138,6 @@ export default function Dashboard() {
             <div className="text-xs text-stone-500 mt-1">connectez Shopify pour tracker</div>
           </div>
         </div>
-        {vendeur && <StatsVendeur vendeurId={vendeur.id} />}
 
         {/* Codes */}
         <h2 className="text-sm font-medium text-stone-900 mb-3">Vos codes d'affiliation</h2>
