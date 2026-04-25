@@ -90,6 +90,7 @@ export default function Dashboard() {
   { label: 'Stats', href: '/stats' },
   { label: 'Paiements', href: '/paiements' },
   { label: 'Boutiques', href: '/boutiques' },
+  { label: 'Support', href: '/support' }
   { label: 'Paramètres', href: '/parametres' },
 ].map(({ label, href }) => (
   <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
