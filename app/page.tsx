@@ -84,12 +84,18 @@ export default function Dashboard() {
             <span className="w-1.5 h-1.5 rounded-full bg-stone-900 inline-block"></span>
             Tableau de bord
           </div>
-          {['Mes codes','Affiliés','Stats','Paiements','Paramètres'].map(item => (
-            <div key={item} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
-              <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
-              {item}
-            </div>
-          ))}
+          {[
+  { label: 'Mes codes', href: '/nouveau-code' },
+  { label: 'Affiliés', href: '/affilies' },
+  { label: 'Stats', href: '/stats' },
+  { label: 'Paiements', href: '/paiements' },
+  { label: 'Paramètres', href: '/parametres' },
+].map(({ label, href }) => (
+  <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
+    <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
+    {label}
+  </a>
+))}
         </nav>
         <div className="mt-auto px-5 pb-4">
           <div className="text-xs text-stone-400 mb-1">Connecté en tant que</div>
