@@ -228,7 +228,7 @@ export default function Landing() {
         </div>
         <div style={{ display: 'flex', gap: '16px' }}>
           {['CGU', 'Confidentialité', 'Contact'].map((link, i) => (
-            <span key={i} style={{ fontSize: '11px', color: '#888', cursor: 'pointer' }}>{link}</span>
+            <a key={i} href={`/${link.toLowerCase().replace('é', 'e').replace('à', 'a')}`} style={{ fontSize: '11px', color: '#888', cursor: 'pointer', textDecoration: 'none' }}>{link}</a>
           ))}
         </div>
         <div style={{ fontSize: '11px', color: '#555', width: '100%', textAlign: 'center', marginTop: '8px' }}>© 2026 Affilybase — Tous droits réservés</div>
