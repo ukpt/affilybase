@@ -128,23 +128,24 @@ export default function Landing() {
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Simple et transparent</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Commencez gratuitement, évoluez selon vos besoins.</p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px' }}>
-          {[
-            { name: 'Free', price: '0€', period: "1 mois d'essai", features: ['1 code actif', '1 partenaire', 'Dashboard brandé', 'Lien court perso'], popular: false },
-            { name: 'Starter', price: '5€', period: 'par mois', features: ['20 codes actifs', '20 partenaires', 'Dashboard brandé', 'Lien court perso'], popular: true },
-            { name: 'Pro', price: '9.99€', period: 'par mois', features: ['50 codes actifs', '50 partenaires', 'Dashboard brandé', 'Stats avancées'], popular: false },
-            { name: 'Business', price: '39.99€', period: 'par mois', features: ['Illimité', 'Dashboard brandé', 'Multi-boutiques', 'Support prioritaire'], popular: false },
-          ].map(({ name, price, period, features, popular }, i) => (
-            <div key={i} style={{ background: '#fff', border: popular ? '2px solid #1a1a1a' : '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1rem' }}>
-              {popular && <span style={{ display: 'inline-block', background: '#d4cfc6', color: '#1a1a1a', fontSize: '10px', padding: '3px 8px', borderRadius: '4px', marginBottom: '8px' }}>Populaire</span>}
-              <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px' }}>{name}</div>
-              <div style={{ fontSize: '20px', fontWeight: 500, marginBottom: '2px' }}>{price}</div>
-              <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px' }}>{period}</div>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                {features.map((f, j) => <li key={j} style={{ fontSize: '11px', color: '#555', display: 'flex', gap: '5px' }}><span style={{ color: '#2D9B6F' }}>✓</span>{f}</li>)}
-              </ul>
-            </div>
-          ))}
-        </div>
+  {[
+    { name: 'Free', price: '0€', period: "1 mois d'essai", features: ['1 code actif', '1 partenaire', 'Dashboard brandé', 'Lien court perso'], excluded: ['Stats avancées', 'Multi-boutiques', 'Support prioritaire'], popular: false },
+    { name: 'Starter', price: '5€', period: 'par mois', features: ['20 codes actifs', '20 partenaires', 'Dashboard brandé', 'Lien court perso', 'Stats avancées'], excluded: ['Multi-boutiques', 'Support prioritaire'], popular: true },
+    { name: 'Pro', price: '9.99€', period: 'par mois', features: ['50 codes actifs', '50 partenaires', 'Dashboard brandé', 'Lien court perso', 'Stats avancées'], excluded: ['Multi-boutiques', 'Support prioritaire'], popular: false },
+    { name: 'Business', price: '39.99€', period: 'par mois', features: ['Illimité', 'Dashboard brandé', 'Lien court perso', 'Stats avancées', 'Multi-boutiques', 'Support prioritaire'], excluded: [], popular: false },
+  ].map(({ name, price, period, features, excluded, popular }, i) => (
+    <div key={i} style={{ background: '#fff', border: popular ? '2px solid #1a1a1a' : '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1rem' }}>
+      {popular && <span style={{ display: 'inline-block', background: '#d4cfc6', color: '#1a1a1a', fontSize: '10px', padding: '3px 8px', borderRadius: '4px', marginBottom: '8px' }}>Populaire</span>}
+      <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px' }}>{name}</div>
+      <div style={{ fontSize: '20px', fontWeight: 500, marginBottom: '2px' }}>{price}</div>
+      <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px' }}>{period}</div>
+      <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+        {features.map((f, j) => <li key={j} style={{ fontSize: '11px', color: '#555', display: 'flex', gap: '5px' }}><span style={{ color: '#2D9B6F' }}>✓</span>{f}</li>)}
+        {excluded.map((f, j) => <li key={j} style={{ fontSize: '11px', color: '#bbb', display: 'flex', gap: '5px' }}><span>✗</span>{f}</li>)}
+      </ul>
+    </div>
+  ))}
+</div>
       </div>
 
       {/* CHIFFRES */}
