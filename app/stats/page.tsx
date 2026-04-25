@@ -66,7 +66,7 @@ export default function Stats() {
           </div>
         </div>
 
-        {vendeur && <StatsVendeur vendeurId={vendeur.id} />}
+        {vendeur && <StatsVendeur vendeurId={vendeur.id} plan={vendeur.plan || 'free'} />}
       </div>
     </div>
   )
