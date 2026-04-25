@@ -1,6 +1,6 @@
 'use client'
 import Logo from './components/Logo'
-
+import StatsVendeur from './components/StatsVendeur'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from './lib/supabase'
@@ -138,6 +138,7 @@ export default function Dashboard() {
             <div className="text-xs text-stone-500 mt-1">connectez Shopify pour tracker</div>
           </div>
         </div>
+        {vendeur && <StatsVendeur vendeurId={vendeur.id} />}
 
         {/* Codes */}
         <h2 className="text-sm font-medium text-stone-900 mb-3">Vos codes d'affiliation</h2>
