@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 export default function Affilie() {
   const [code, setCode] = useState<any>(null)
   const [vendeur, setVendeur] = useState<any>(null)
+  const [ventes, setVentes] = useState<any[]>([])
   const [copied, setCopied] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
 
@@ -14,32 +15,47 @@ export default function Affilie() {
       if (!user) { window.location.href = '/login'; return }
 
       const { data: affilieData } = await supabase
-  .from('affilies')
-  .select('*')
-  .eq('email', user.email)
-  .single()
+        .from('affilies')
+        .select('*')
+        .eq('email', user.email)
+        .single()
 
-if (affilieData) {
-  const { data: codeData } = await supabase
-    .from('codes')
-    .select('*')
-    .eq('affilie_id', affilieData.id)
-    .single()
+      if (affilieData) {
+        const { data: codeData } = await supabase
+          .from('codes')
+          .select('*')
+          .eq('affilie_id', affilieData.id)
+          .single()
 
-  const { data: vendeurData } = await supabase
-    .from('vendeurs')
-    .select('*')
-    .eq('id', affilieData.vendeur_id)
-    .single()
+        const { data: vendeurData } = await supabase
+          .from('vendeurs')
+          .select('*')
+          .eq('id', affilieData.vendeur_id)
+          .single()
 
-  setCode(codeData)
-  setVendeur(vendeurData)
-}
+        if (codeData) {
+          const { data: ventesData } = await supabase
+            .from('ventes')
+            .select('*')
+            .eq('code_id', codeData.id)
+            .order('created_at', { ascending: false })
+
+          setVentes(ventesData || [])
+        }
+
+        setCode(codeData)
+        setVendeur(vendeurData)
+      }
     }
     init()
   }, [])
 
-  const lienAffiliation = code ? `${vendeur?.shopify_url}?ref=${code.code}` : ''
+  const lienAffiliation = code && vendeur?.shopify_url 
+    ? `${vendeur.shopify_url}?ref=${code.code}` 
+    : `https://affilybase.vercel.app/r/${code?.code || ''}`
+
+  const totalCommissions = ventes.reduce((sum, v) => sum + (v.commission || 0), 0)
+  const commissionsEnAttente = ventes.filter(v => !v.payee).reduce((sum, v) => sum + (v.commission || 0), 0)
 
   const copyCode = () => {
     navigator.clipboard.writeText(code?.code || '')
@@ -60,7 +76,7 @@ if (affilieData) {
   )
 
   return (
-    <main style={{ minHeight: '100vh', background: '#F5F2EC', fontFamily: 'Georgia, serif', color: '#1a1a1a', padding: '1.5rem', maxWidth: '600px', margin: '0 auto' }}>
+    <main style={{ minHeight: '100vh', background: '#F5F2EC', fontFamily: 'Georgia, serif', color: '#1a1a1a', padding: '1.5rem', maxWidth: '680px', margin: '0 auto' }}>
 
       {/* HEADER */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
@@ -75,23 +91,27 @@ if (affilieData) {
 
       {/* STATS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px', marginBottom: '1.25rem' }}>
-        {[
-          { label: 'Ventes générées', value: '—', sub: '' },
-          { label: 'Clics sur le lien', value: '—', sub: '' },
-          { label: 'Commissions gagnées', value: '—', sub: '' },
-        ].map(({ label, value, sub }, i) => (
-          <div key={i} style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '8px', padding: '1rem' }}>
-            <div style={{ fontSize: '12px', color: '#888', marginBottom: '6px' }}>{label}</div>
-            <div style={{ fontSize: '22px', fontWeight: 500 }}>{value}</div>
-            {sub && <div style={{ fontSize: '12px', color: '#2D9B6F', marginTop: '4px' }}>{sub}</div>}
-          </div>
-        ))}
+        <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '8px', padding: '1rem' }}>
+          <div style={{ fontSize: '12px', color: '#888', marginBottom: '6px' }}>Ventes générées</div>
+          <div style={{ fontSize: '22px', fontWeight: 500 }}>{ventes.length}</div>
+          <div style={{ fontSize: '12px', color: '#2D9B6F', marginTop: '4px' }}>depuis le début</div>
+        </div>
+        <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '8px', padding: '1rem' }}>
+          <div style={{ fontSize: '12px', color: '#888', marginBottom: '6px' }}>Commissions gagnées</div>
+          <div style={{ fontSize: '22px', fontWeight: 500 }}>{totalCommissions.toFixed(2)}€</div>
+          <div style={{ fontSize: '12px', color: '#2D9B6F', marginTop: '4px' }}>total cumulé</div>
+        </div>
+        <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '8px', padding: '1rem' }}>
+          <div style={{ fontSize: '12px', color: '#888', marginBottom: '6px' }}>En attente</div>
+          <div style={{ fontSize: '22px', fontWeight: 500 }}>{commissionsEnAttente.toFixed(2)}€</div>
+          <div style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>à percevoir</div>
+        </div>
       </div>
 
       {/* COMMISSION EN ATTENTE */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#E1F5EE', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '1.25rem' }}>
         <span style={{ fontSize: '13px', color: '#085041' }}>Commission en attente</span>
-        <span style={{ fontSize: '18px', fontWeight: 500, color: '#0F6E56' }}>—</span>
+        <span style={{ fontSize: '18px', fontWeight: 500, color: '#0F6E56' }}>{commissionsEnAttente.toFixed(2)}€</span>
       </div>
 
       {/* CODE PROMO */}
@@ -115,7 +135,7 @@ if (affilieData) {
       </div>
 
       {/* PARTAGE */}
-      <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem' }}>
+      <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1.25rem' }}>
         <div style={{ fontSize: '14px', fontWeight: 500, marginBottom: '12px' }}>Partager rapidement</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '10px' }}>
           {[
@@ -132,8 +152,33 @@ if (affilieData) {
         </div>
       </div>
 
+      {/* HISTORIQUE VENTES */}
+      <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1.25rem' }}>
+        <div style={{ fontSize: '14px', fontWeight: 500, marginBottom: '12px' }}>Historique des ventes</div>
+        {ventes.length === 0 ? (
+          <div style={{ fontSize: '13px', color: '#888', textAlign: 'center', padding: '1rem' }}>Aucune vente pour le moment</div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {ventes.map((vente, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', background: '#F5F2EC', borderRadius: '8px' }}>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 500 }}>Commande #{String(i + 1).padStart(4, '0')}</div>
+                  <div style={{ fontSize: '11px', color: '#888' }}>{new Date(vente.created_at).toLocaleDateString('fr-FR')} — Panier : {vente.montant}€</div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 500, color: '#2D9B6F' }}>+{vente.commission}€</span>
+                  <span style={{ fontSize: '11px', background: vente.payee ? '#e0ede7' : '#faeeda', color: vente.payee ? '#1a6645' : '#BA7517', padding: '2px 8px', borderRadius: '4px' }}>
+                    {vente.payee ? 'Payé' : 'En attente'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* DECONNEXION */}
-      <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
         <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login' }} style={{ fontSize: '12px', color: '#888', background: 'none', border: 'none', cursor: 'pointer' }}>
           Se déconnecter
         </button>
