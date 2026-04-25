@@ -130,7 +130,7 @@ export default function Landing() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px' }}>
   {[
     { name: 'Free', price: '0€', period: "1 mois d'essai", features: ['1 code actif', '1 partenaire', 'Dashboard brandé', 'Lien court perso'], excluded: ['Stats avancées', 'Multi-boutiques', 'Support prioritaire'], popular: false },
-    { name: 'Starter', price: '5€', period: 'par mois', features: ['20 codes actifs', '20 partenaires', 'Dashboard brandé', 'Lien court perso', 'Stats avancées'], excluded: ['Multi-boutiques', 'Support prioritaire'], popular: true },
+    { name: 'Starter', price: '4.99€', period: 'par mois', features: ['20 codes actifs', '20 partenaires', 'Dashboard brandé', 'Lien court perso', 'Stats avancées'], excluded: ['Multi-boutiques', 'Support prioritaire'], popular: true },
     { name: 'Pro', price: '9.99€', period: 'par mois', features: ['50 codes actifs', '50 partenaires', 'Dashboard brandé', 'Lien court perso', 'Stats avancées'], excluded: ['Multi-boutiques', 'Support prioritaire'], popular: false },
     { name: 'Business', price: '39.99€', period: 'par mois', features: ['Illimité', 'Dashboard brandé', 'Lien court perso', 'Stats avancées', 'Multi-boutiques', 'Support prioritaire'], excluded: [], popular: false },
   ].map(({ name, price, period, features, excluded, popular }, i) => (
