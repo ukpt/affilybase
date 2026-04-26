@@ -3,7 +3,7 @@ export default function Landing() {
     <main style={{ fontFamily: 'Georgia, serif', maxWidth: '100%', margin: '0' , background: '#F5F2EC', color: '#1a1a1a', minHeight: '100vh' }}>
 
       {/* NAV */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', borderBottom: '0.5px solid #ddd8ce' }}>
+      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', maxWidth: '1200px', margin: '0 auto', borderBott...
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1 }}>
           <span style={{ fontSize: '22px', fontWeight: 700, letterSpacing: '0.04em' }}>Affily</span>
           <div style={{ width: '100%', height: '1px', background: '#1a1a1a', margin: '3px 0' }} />
@@ -16,7 +16,7 @@ export default function Landing() {
       </nav>
 
       {/* HERO */}
-      <div style={{ padding: '3rem 1.5rem 0', textAlign: 'center' }}>
+      <div style={{ padding: '3rem 1.5rem 0', textAlign: 'center', maxWidth: '1100px', margin: '0 auto' }}>
         <span style={{ display: 'inline-block', background: '#e0ede7', color: '#1a6645', fontSize: '12px', padding: '4px 14px', borderRadius: '20px', marginBottom: '1.2rem' }}>Compatible Shopify</span>
         <h1 style={{ fontSize: '30px', fontWeight: 400, lineHeight: 1.4, marginBottom: '1rem' }}>
           Boostez vos ventes Shopify<br />avec vos <span style={{ background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px' }}>Partenaires</span>
@@ -237,3 +237,6 @@ export default function Landing() {
     </main>
   )
 }
+
+
+
