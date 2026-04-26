@@ -1,6 +1,6 @@
 export default function Landing() {
   return (
-    <main style={{ fontFamily: 'Georgia, serif', maxWidth: '1200px', margin: '0 auto', background: '#F5F2EC', color: '#1a1a1a', minHeight: '100vh' }}>
+    <main style={{ fontFamily: 'Georgia, serif', maxWidth: '100%', margin: '0' , background: '#F5F2EC', color: '#1a1a1a', minHeight: '100vh' }}>
 
       {/* NAV */}
       <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', borderBottom: '0.5px solid #ddd8ce' }}>
