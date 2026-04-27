@@ -1,0 +1,25 @@
+name = "Affilybase"
+client_id = "89197f659130e9987a2e1ae2683085b4"
+application_url = "https://affilybase.com"
+embedded = true
+
+[access_scopes]
+scopes = "read_price_rules,write_price_rules,read_discounts,write_discounts,read_orders"
+
+[auth]
+redirect_urls = ["https://affilybase.com/api/auth/callback"]
+
+[webhooks]
+api_version = "2026-04"
+
+  [[webhooks.subscriptions]]
+  topics = ["customers/data_request"]
+  uri = "https://affilybase.com/api/webhooks/customers/data_request"
+
+  [[webhooks.subscriptions]]
+  topics = ["customers/redact"]
+  uri = "https://affilybase.com/api/webhooks/customers/redact"
+
+  [[webhooks.subscriptions]]
+  topics = ["shop/redact"]
+  uri = "https://affilybase.com/api/webhooks/shop/redact"
