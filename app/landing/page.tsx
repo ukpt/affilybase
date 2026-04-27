@@ -3,7 +3,7 @@ export default function Landing() {
     <main style={{ fontFamily: 'Georgia, serif', maxWidth: '100%', margin: '0' , background: '#F5F2EC', color: '#1a1a1a', minHeight: '100vh' }}>
 
       {/* NAV */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', maxWidth: '1200px', margin: '0 auto', borderBott...
+      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', maxWidth: '1200px', margin: '0 auto', borderBottom: '1px solid #e5e7eb' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1 }}>
           <span style={{ fontSize: '22px', fontWeight: 700, letterSpacing: '0.04em' }}>Affily</span>
           <div style={{ width: '100%', height: '1px', background: '#1a1a1a', margin: '3px 0' }} />
