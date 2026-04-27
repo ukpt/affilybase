@@ -1,4 +1,4 @@
-export default function Landing() {
+﻿export default function Landing() {
   return (
     <main style={{ fontFamily: 'Georgia, serif', maxWidth: '100%', margin: '0' , background: '#F5F2EC', color: '#1a1a1a', minHeight: '100vh' }}>
 
