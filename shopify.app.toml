@@ -14,4 +14,4 @@ api_version = "2026-04"
 
 [[webhooks.subscriptions]]
 compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
-uri = "https://affilybase.com/api/webhooks"
+uri = "https://www.affilybase.com/api/webhooks"
