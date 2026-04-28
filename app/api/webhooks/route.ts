@@ -1,14 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 
 const SECRET = process.env.SHOPIFY_API_SECRET || ''
 
 function verifyHmac(body: string, hmacHeader: string): boolean {
-  const hash = crypto
-    .createHmac('sha256', SECRET)
-    .update(body, 'utf8')
-    .digest('base64')
-  return hash === hmacHeader
+  const hashBase64 = crypto.createHmac('sha256', SECRET).update(body, 'utf8').digest('base64')
+  const hashHex = crypto.createHmac('sha256', SECRET).update(body, 'utf8').digest('hex')
+  return hashBase64 === hmacHeader || hashHex === hmacHeader
 }
 
 export async function POST(req: NextRequest) {
@@ -24,10 +22,10 @@ export async function POST(req: NextRequest) {
     case 'customers/data_request':
     case 'customers/redact':
     case 'shop/redact':
-      console.log(`Webhook reçu: ${topic}`)
+      console.log('Webhook recu: ' + topic)
       break
     default:
-      console.log(`Webhook non géré: ${topic}`)
+      console.log('Webhook non gere: ' + topic)
   }
 
   return NextResponse.json({ success: true }, { status: 200 })
