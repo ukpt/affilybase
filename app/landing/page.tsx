@@ -3,7 +3,7 @@ export default function Landing() {
     <main style={{ fontFamily: 'Georgia, serif', maxWidth: '100%', margin: '0' , background: '#F5F2EC', color: '#1a1a1a', minHeight: '100vh' }}>
 
       {/* NAV */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', maxWidth: '1200px', margin: '0 auto', borderBottom: '1px solid #e5e7eb' }}>
+      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', borderBottom: '0.5px solid #ddd8ce' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1 }}>
           <span style={{ fontSize: '22px', fontWeight: 700, letterSpacing: '0.04em' }}>Affily</span>
           <div style={{ width: '100%', height: '1px', background: '#1a1a1a', margin: '3px 0' }} />
@@ -16,7 +16,7 @@ export default function Landing() {
       </nav>
 
       {/* HERO */}
-      <div style={{ padding: '3rem 1.5rem 0', textAlign: 'center', maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ padding: '3rem 1.5rem 0', textAlign: 'center' }}>
         <span style={{ display: 'inline-block', background: '#e0ede7', color: '#1a6645', fontSize: '12px', padding: '4px 14px', borderRadius: '20px', marginBottom: '1.2rem' }}>Compatible Shopify</span>
         <h1 style={{ fontSize: '30px', fontWeight: 400, lineHeight: 1.4, marginBottom: '1rem' }}>
           Boostez vos ventes Shopify<br />avec vos <span style={{ background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px' }}>Partenaires</span>
@@ -80,7 +80,7 @@ export default function Landing() {
 
       {/* 3 FAÇONS */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ padding: '2rem 1.5rem' }}>
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>3 façons de l'utiliser</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Un outil, trois stratégies gagnantes</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Affilybase s'adapte à votre façon de vendre.</p>
@@ -102,7 +102,7 @@ export default function Landing() {
 
       {/* COMMENT CA MARCHE */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ padding: '2rem 1.5rem' }}>
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>Comment ça marche</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>En place en 5 minutes</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Pas besoin de développeur. Tout se configure depuis votre dashboard.</p>
@@ -123,7 +123,7 @@ export default function Landing() {
 
       {/* TARIFS */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ padding: '2rem 1.5rem' }}>
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>Tarifs</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Simple et transparent</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Commencez gratuitement, évoluez selon vos besoins.</p>
@@ -150,7 +150,7 @@ export default function Landing() {
 
       {/* CHIFFRES */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ padding: '2rem 1.5rem' }}>
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>Affilybase en chiffres</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Déjà adopté par des boutiques Shopify</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Des premiers résultats encourageants.</p>
@@ -166,7 +166,7 @@ export default function Landing() {
 
       {/* AVIS */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ padding: '2rem 1.5rem' }}>
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>Avis clients</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Ils utilisent Affilybase</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Des boutiques Shopify qui ont boosté leurs ventes grâce à leurs partenaires.</p>
@@ -193,7 +193,7 @@ export default function Landing() {
 
       {/* FAQ */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ padding: '2rem 1.5rem' }}>
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>FAQ</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Questions fréquentes</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Tout ce que vous voulez savoir avant de commencer.</p>
@@ -237,7 +237,3 @@ export default function Landing() {
     </main>
   )
 }
-
-
-
-
