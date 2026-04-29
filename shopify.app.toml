@@ -1,7 +1,7 @@
-﻿name = "Affilybase"
+name = "Affilybase"
 client_id = "89197f659130e9987a2e1ae2683085b4"
 application_url = "https://affilybase.com"
-embedded = true
+embedded = false
 
 [access_scopes]
 scopes = "read_price_rules,write_price_rules,read_discounts,write_discounts,read_orders"
