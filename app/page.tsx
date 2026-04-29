@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import Logo from './components/Logo'
 import StatsVendeur from './components/StatsVendeur'
 import { useEffect, useState } from 'react'
@@ -85,13 +85,13 @@ export default function Dashboard() {
             Tableau de bord
           </div>
           {[
-  { label: 'Mes codes', href: '/nouveau-code' },
-  { label: 'Affiliés', href: '/affilies' },
+  { label: 'Mes codes', href: '/mes-codes' },
+  { label: 'AffiliÃ©s', href: '/affilies' },
   { label: 'Stats', href: '/stats' },
   { label: 'Paiements', href: '/paiements' },
   { label: 'Boutiques', href: '/boutiques' },
   { label: 'Support', href: '/support' },
-  { label: 'Paramètres', href: '/parametres' },
+  { label: 'ParamÃ¨tres', href: '/parametres' },
 ].map(({ label, href }) => (
   <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
     <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
@@ -100,13 +100,13 @@ export default function Dashboard() {
 ))}
         </nav>
         <div className="mt-auto px-5 pb-4">
-          <div className="text-xs text-stone-400 mb-1">Connecté en tant que</div>
+          <div className="text-xs text-stone-400 mb-1">ConnectÃ© en tant que</div>
           <div className="text-xs text-stone-600 font-medium truncate">{userEmail}</div>
           <button
             onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login' }}
             className="mt-3 text-xs text-stone-400 hover:text-stone-600 cursor-pointer"
           >
-            Se déconnecter
+            Se dÃ©connecter
           </button>
         </div>
       </div>
@@ -128,21 +128,21 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Métriques */}
+        {/* MÃ©triques */}
         <div className="grid grid-cols-3 gap-2.5 mb-5">
           <div className="bg-white border border-stone-200 rounded-lg p-3.5">
-            <div className="text-xs text-stone-400 mb-1.5">Codes créés</div>
+            <div className="text-xs text-stone-400 mb-1.5">Codes crÃ©Ã©s</div>
             <div className="text-2xl font-medium text-stone-900">{totalCodes}</div>
             <div className="text-xs text-stone-500 mt-1">{codesActifs} actifs</div>
           </div>
           <div className="bg-white border border-stone-200 rounded-lg p-3.5">
-            <div className="text-xs text-stone-400 mb-1.5">Affiliés</div>
+            <div className="text-xs text-stone-400 mb-1.5">AffiliÃ©s</div>
             <div className="text-2xl font-medium text-stone-900">{totalCodes}</div>
             <div className="text-xs text-stone-500 mt-1">dans votre programme</div>
           </div>
           <div className="bg-white border border-stone-200 rounded-lg p-3.5">
-            <div className="text-xs text-stone-400 mb-1.5">Ventes générées</div>
-            <div className="text-2xl font-medium text-stone-900">0 €</div>
+            <div className="text-xs text-stone-400 mb-1.5">Ventes gÃ©nÃ©rÃ©es</div>
+            <div className="text-2xl font-medium text-stone-900">0 â‚¬</div>
             <div className="text-xs text-stone-500 mt-1">connectez Shopify pour tracker</div>
           </div>
         </div>
@@ -156,7 +156,7 @@ export default function Dashboard() {
             className="bg-white border border-dashed border-stone-300 rounded-xl p-10 text-center cursor-pointer hover:bg-stone-50"
           >
             <div className="text-2xl text-stone-300 mb-2">+</div>
-            <div className="text-sm text-stone-500">Créez votre premier code d'affiliation</div>
+            <div className="text-sm text-stone-500">CrÃ©ez votre premier code d'affiliation</div>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-2.5 mb-5">
@@ -169,8 +169,8 @@ export default function Dashboard() {
                   </span>
                 </div>
                 {[
-                  ['Affilié', c.affilies?.nom || '—'],
-                  ['Commission affilié', c.commission_pct + '%'],
+                  ['AffiliÃ©', c.affilies?.nom || 'â€”'],
+                  ['Commission affiliÃ©', c.commission_pct + '%'],
                   ['Remise acheteur', c.remise_pct + '%'],
                 ].map(([label, val]) => (
                   <div key={label} className="flex justify-between text-xs py-1 border-b border-stone-100 last:border-0">
@@ -197,3 +197,4 @@ export default function Dashboard() {
     </div>
   )
 }
+
