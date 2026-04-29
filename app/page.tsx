@@ -142,7 +142,7 @@ export default function Dashboard() {
           </div>
           <div className="bg-white border border-stone-200 rounded-lg p-3.5">
             <div className="text-xs text-stone-400 mb-1.5">Ventes générées</div>
-            <div className="text-2xl font-medium text-stone-900">0 €‚¬</div>
+            <div className="text-2xl font-medium text-stone-900">0 €</div>
             <div className="text-xs text-stone-500 mt-1">connectez Shopify pour tracker</div>
           </div>
         </div>
