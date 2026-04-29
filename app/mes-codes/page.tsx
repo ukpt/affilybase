@@ -3,6 +3,17 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import Logo from '../components/Logo'
 
+const menuItems = [
+  { label: 'Tableau de bord', href: '/' },
+  { label: 'Mes codes', href: '/mes-codes' },
+  { label: 'Affiliés', href: '/affilies' },
+  { label: 'Stats', href: '/stats' },
+  { label: 'Paiements', href: '/paiements' },
+  { label: 'Boutiques', href: '/boutiques' },
+  { label: 'Support', href: '/support' },
+  { label: 'Paramètres', href: '/parametres' },
+]
+
 export default function MesCodes() {
   const [codes, setCodes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -11,10 +22,8 @@ export default function MesCodes() {
     const fetchCodes = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { window.location.href = '/login'; return }
-
       const { data: vendeur } = await supabase.from('vendeurs').select('id').eq('email', session.user.email).single()
       if (!vendeur) { setLoading(false); return }
-
       const { data } = await supabase.from('codes').select('*, affilies(nom, email)').eq('vendeur_id', vendeur.id).order('created_at', { ascending: false })
       setCodes(data || [])
       setLoading(false)
@@ -23,14 +32,30 @@ export default function MesCodes() {
   }, [])
 
   return (
-    <div className="min-h-screen" style={{ background: '#F5F2EC' }}>
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 2rem', borderBottom: '0.5px solid #ddd8ce', background: '#fff' }}>
-        <Logo size="sm" />
-        <a href="/nouveau-code" style={{ background: '#1a1a1a', color: '#fff', borderRadius: '6px', padding: '0.5rem 1rem', fontSize: '13px', textDecoration: 'none' }}>+ Nouveau code</a>
-      </nav>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
+      {/* Sidebar */}
+      <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
+        <div className="px-5 pb-6"><Logo size="sm" /></div>
+        <nav className="flex flex-col">
+          <div className="px-5 py-2 text-sm font-medium text-stone-900 bg-stone-100 border-l-2 border-stone-900 flex items-center gap-2 cursor-pointer">
+            <span className="w-1.5 h-1.5 rounded-full bg-stone-900 inline-block"></span>
+            Mes codes
+          </div>
+          {menuItems.filter(i => i.label !== 'Mes codes').map(({ label, href }) => (
+            <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
+              <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
+              {label}
+            </a>
+          ))}
+        </nav>
+      </div>
 
-      <div style={{ padding: '2rem' }}>
-        <h1 style={{ fontSize: '20px', fontWeight: 500, marginBottom: '1.5rem' }}>Mes codes d'affiliation</h1>
+      {/* Main */}
+      <div style={{ flex: 1, padding: '2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h1 style={{ fontSize: '20px', fontWeight: 500 }}>Mes codes d'affiliation</h1>
+          <a href="/nouveau-code" style={{ background: '#1a1a1a', color: '#fff', borderRadius: '6px', padding: '0.5rem 1rem', fontSize: '13px', textDecoration: 'none' }}>+ Nouveau code</a>
+        </div>
 
         {loading && <p style={{ color: '#888', fontSize: '14px' }}>Chargement...</p>}
 
