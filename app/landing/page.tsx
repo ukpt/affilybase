@@ -59,33 +59,49 @@ export default function Landing() {
               <div style={{ fontSize: '13px', fontWeight: 500 }}>Tableau de bord</div>
               <div style={{ fontSize: '9px', color: '#888' }}>Bienvenue sur Affilybase</div>
             </div>
-            <span style={{ background: '#1a1a1a', color: '#fff', borderRadius: '4px', padding: '4px 8px', fontSize: '9px' }}>+ Nouveau code</span>
+            <span style={{ background: '#1a1a1a', color: '#fff', borderRadius: '4px', padding: '4px 10px', fontSize: '9px' }}>+ Nouveau code</span>
           </div>
+
+          {/* Stats cards améliorées */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '8px', marginBottom: '0.75rem' }}>
-            {[['Codes créés', '20', '20 actifs'], ['Affiliés', '20', 'dans votre programme'], ['Ventes générées', '1 240€', 'ce mois']].map(([label, val, sub], i) => (
-              <div key={i} style={{ background: '#fff', borderRadius: '6px', padding: '0.6rem' }}>
-                <div style={{ fontSize: '8px', color: '#888', marginBottom: '3px' }}>{label}</div>
-                <div style={{ fontSize: '14px', fontWeight: 500 }}>{val}</div>
-                <div style={{ fontSize: '8px', color: '#888' }}>{sub}</div>
+            {[
+              { label: 'Codes créés', val: '20', sub: '20 actifs', green: false },
+              { label: 'Affiliés', val: '20', sub: 'dans votre programme', green: false },
+              { label: 'Ventes générées', val: '1 240€', sub: 'ce mois', green: true },
+            ].map(({ label, val, sub, green }, i) => (
+              <div key={i} style={{ background: '#fff', borderRadius: '8px', padding: '10px 12px', borderLeft: `3px solid ${green ? '#2D9B6F' : '#ddd8ce'}` }}>
+                <div style={{ fontSize: '9px', color: '#888', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
+                <div style={{ fontSize: '20px', fontWeight: 500, color: green ? '#2D9B6F' : '#1a1a1a', lineHeight: 1 }}>{val}</div>
+                <div style={{ fontSize: '9px', color: green ? '#2D9B6F' : '#888', marginTop: '3px' }}>{sub}</div>
               </div>
             ))}
           </div>
+
           <div style={{ fontSize: '10px', fontWeight: 500, marginBottom: '0.5rem' }}>Vos codes d'affiliation</div>
+
+          {/* Code cards améliorées */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
             {[['STYLE2024', '10%', '20%'], ['PROMO15', '10%', '15%'], ['PARTNER30', '15%', '10%'], ['SUMMER10', '10%', '10%']].map(([code, comm, remise], i) => (
-              <div key={i} style={{ background: '#fff', borderRadius: '6px', padding: '0.6rem' }}>
-                <div style={{ fontSize: '10px', fontWeight: 500, marginBottom: '4px', display: 'flex', justifyContent: 'space-between' }}>
-                  {code} <span style={{ color: '#2D9B6F', fontSize: '9px' }}>Actif</span>
+              <div key={i} style={{ background: '#fff', borderRadius: '8px', padding: '8px 12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 500, fontFamily: 'monospace', color: '#1a1a1a' }}>{code}</span>
+                  <span style={{ background: '#e8f5ee', color: '#0F6E56', fontSize: '9px', padding: '2px 6px', borderRadius: '4px' }}>Actif</span>
                 </div>
-                <div style={{ fontSize: '8px', color: '#888', display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}><span>Commission affilié</span><span>{comm}</span></div>
-                <div style={{ fontSize: '8px', color: '#888', display: 'flex', justifyContent: 'space-between' }}><span>Remise acheteur</span><span>{remise}</span></div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderTop: '0.5px solid #f0f0f0' }}>
+                  <span style={{ fontSize: '10px', color: '#888' }}>Commission</span>
+                  <span style={{ fontSize: '10px', fontWeight: 500, color: '#1a1a1a' }}>{comm}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
+                  <span style={{ fontSize: '10px', color: '#888' }}>Remise</span>
+                  <span style={{ fontSize: '10px', fontWeight: 500, color: '#1a1a1a' }}>{remise}</span>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* 2 écrans alignés sans perspective */}
+      {/* 2 écrans alignés */}
       <div style={{ margin: '0 4rem 2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
         {/* Espace affilié */}
