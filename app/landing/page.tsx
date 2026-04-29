@@ -1,4 +1,4 @@
-﻿export default function Landing() {
+export default function Landing() {
   return (
     <main style={{ fontFamily: 'Georgia, serif', maxWidth: '100%', margin: '0', background: '#F5F2EC', color: '#1a1a1a', minHeight: '100vh' }}>
 
@@ -21,7 +21,7 @@
         <h1 style={{ fontSize: '30px', fontWeight: 400, lineHeight: 1.4, marginBottom: '1rem' }}>
           Boostez vos ventes Shopify<br />avec vos <span style={{ background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px' }}>Partenaires</span>
         </h1>
-        <p style={{ fontSize: '14px', color: '#555', lineHeight: 1.8, maxWidth: '500px', margin: '0 auto 2rem' }}>
+        <p style={{ fontSize: '14px', color: '#555', lineHeight: 1.8, maxWidth: '700px', margin: '0 auto 2rem' }}>
           Collaborez avec des créateurs, des boutiques partenaires ou vos clients — ils recommandent, vous gagnez en visibilité, vous vendez, ils touchent une commission. Tout le monde gagne.
         </p>
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2rem' }}>
@@ -38,6 +38,7 @@
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7 }}>Gérez vos affiliés, suivez vos commissions et analysez vos performances — le tout en quelques clics.</p>
       </div>
 
+      {/* Dashboard vendeur */}
       <div style={{ margin: '0 4rem 1.5rem', border: '0.5px solid #ddd8ce', borderRadius: '10px', overflow: 'hidden', display: 'flex', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
         <div style={{ width: '130px', background: '#fff', borderRight: '0.5px solid #ddd8ce', padding: '1rem 0', flexShrink: 0 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.2rem', padding: '0 1rem' }}>
@@ -84,9 +85,11 @@
         </div>
       </div>
 
-      {/* 2 écrans en perspective */}
+      {/* 2 écrans alignés sans perspective */}
       <div style={{ margin: '0 4rem 2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-        <div style={{ transform: 'perspective(900px) rotateX(6deg) rotateY(-4deg)', transformOrigin: 'center top', background: '#fff', borderRadius: '12px', border: '0.5px solid #ddd', overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.10)' }}>
+
+        {/* Espace affilié */}
+        <div style={{ background: '#fff', borderRadius: '12px', border: '0.5px solid #ddd8ce', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
           <div style={{ background: '#f8f7f4', padding: '8px 14px', borderBottom: '0.5px solid #eee' }}>
             <span style={{ fontSize: '11px', color: '#888', fontWeight: 500 }}>Espace Affilié</span>
           </div>
@@ -129,7 +132,8 @@
           </div>
         </div>
 
-        <div style={{ transform: 'perspective(900px) rotateX(6deg) rotateY(4deg)', transformOrigin: 'center top', background: '#fff', borderRadius: '12px', border: '0.5px solid #ddd', overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.10)' }}>
+        {/* Stats avancées */}
+        <div style={{ background: '#fff', borderRadius: '12px', border: '0.5px solid #ddd8ce', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
           <div style={{ background: '#f8f7f4', padding: '8px 14px', borderBottom: '0.5px solid #eee' }}>
             <span style={{ fontSize: '11px', color: '#888', fontWeight: 500 }}>Stats Avancées</span>
           </div>
