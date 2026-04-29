@@ -86,12 +86,12 @@ export default function Dashboard() {
           </div>
           {[
   { label: 'Mes codes', href: '/mes-codes' },
-  { label: 'AffiliÃ©s', href: '/affilies' },
+  { label: 'Affiliés', href: '/affilies' },
   { label: 'Stats', href: '/stats' },
   { label: 'Paiements', href: '/paiements' },
   { label: 'Boutiques', href: '/boutiques' },
   { label: 'Support', href: '/support' },
-  { label: 'ParamÃ¨tres', href: '/parametres' },
+  { label: 'Paramètres', href: '/parametres' },
 ].map(({ label, href }) => (
   <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
     <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
