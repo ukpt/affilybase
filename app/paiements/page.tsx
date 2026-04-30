@@ -14,7 +14,7 @@ const menuItems = [
   { label: 'Paramètres', href: '/parametres' },
 ]
 
-const MOYENS = ['Virement bancaire', 'PayPal', 'Lydia', 'Revolut', 'Autre']
+const MOYENS = ['Virement bancaire', 'Virement instantané', 'PayPal', 'Lydia / Sumeria', 'Revolut', 'Wise', 'Autre']
 
 export default function Paiements() {
   const [vendeur, setVendeur] = useState<any>(null)
@@ -169,7 +169,7 @@ export default function Paiements() {
             <div style={{ fontSize: '12px', color: '#888' }}>Fréquence :</div>
             {['mensuel', 'bimensuel', 'manuel'].map(f => (
               <button key={f} onClick={() => setFrequence(f)} style={{ fontSize: '12px', padding: '5px 12px', borderRadius: '6px', border: '0.5px solid #ddd8ce', background: frequence === f ? '#1a1a1a' : '#F5F2EC', color: frequence === f ? '#fff' : '#555', cursor: 'pointer' }}>
-                {f === 'mensuel' ? 'Mensuel' : f === 'bimensuel' ? 'Bimensuel' : 'Manuel'}
+                {f === 'mensuel' ? 'Mensuel' : f === 'bimensuel' ? 'Tous les 15 jours' : 'Manuel'}
               </button>
             ))}
             <button onClick={saveMoyens} disabled={savingMoyens} style={{ marginLeft: 'auto', background: savedMoyens ? '#1D9E75' : '#1a1a1a', color: '#fff', border: 'none', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', cursor: 'pointer' }}>
