@@ -17,6 +17,8 @@ const menuItems = [
 export default function MesCodes() {
   const [codes, setCodes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [supprimant, setSupprimant] = useState<string | null>(null)
+  const [confirmer, setConfirmer] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchCodes = async () => {
@@ -30,6 +32,15 @@ export default function MesCodes() {
     }
     fetchCodes()
   }, [])
+
+  const supprimerCode = async (id: string) => {
+    setSupprimant(id)
+    await supabase.from('ventes').delete().eq('code_id', id)
+    await supabase.from('codes').delete().eq('id', id)
+    setCodes(prev => prev.filter(c => c.id !== id))
+    setSupprimant(null)
+    setConfirmer(null)
+  }
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
@@ -69,24 +80,56 @@ export default function MesCodes() {
         {!loading && codes.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {codes.map((c) => (
-              <div key={c.id} style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div>
-                  <span style={{ fontFamily: 'monospace', fontSize: '16px', fontWeight: 600, color: '#1a1a1a' }}>{c.code}</span>
-                  <div style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>{c.affilies?.nom} — {c.affilies?.email}</div>
-                </div>
-                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '14px', fontWeight: 500 }}>{c.commission_pct}%</div>
-                    <div style={{ fontSize: '10px', color: '#888' }}>Commission</div>
+              <div key={c.id} style={{ background: '#fff', border: `0.5px solid ${confirmer === c.id ? '#f0997b' : '#ddd8ce'}`, borderRadius: '10px', padding: '1rem 1.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <span style={{ fontFamily: 'monospace', fontSize: '16px', fontWeight: 600, color: '#1a1a1a' }}>{c.code}</span>
+                    <div style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>{c.affilies?.nom} — {c.affilies?.email}</div>
                   </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '14px', fontWeight: 500 }}>{c.remise_pct}%</div>
-                    <div style={{ fontSize: '10px', color: '#888' }}>Remise</div>
+                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '14px', fontWeight: 500 }}>{c.commission_pct}%</div>
+                      <div style={{ fontSize: '10px', color: '#888' }}>Commission</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '14px', fontWeight: 500 }}>{c.remise_pct}%</div>
+                      <div style={{ fontSize: '10px', color: '#888' }}>Remise</div>
+                    </div>
+                    <span style={{ background: c.actif ? '#e8f5ee' : '#f5f5f5', color: c.actif ? '#0F6E56' : '#888', fontSize: '11px', padding: '3px 10px', borderRadius: '20px' }}>
+                      {c.actif ? 'Actif' : 'Inactif'}
+                    </span>
+                    <button
+                      onClick={() => setConfirmer(confirmer === c.id ? null : c.id)}
+                      style={{ fontSize: '12px', color: '#888', background: 'none', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer' }}
+                    >
+                      Supprimer
+                    </button>
                   </div>
-                  <span style={{ background: c.actif ? '#e8f5ee' : '#f5f5f5', color: c.actif ? '#0F6E56' : '#888', fontSize: '11px', padding: '3px 10px', borderRadius: '20px' }}>
-                    {c.actif ? 'Actif' : 'Inactif'}
-                  </span>
                 </div>
+
+                {/* Confirmation suppression */}
+                {confirmer === c.id && (
+                  <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '0.5px solid #f0997b', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#FAECE7', borderRadius: '6px', padding: '10px 14px' }}>
+                    <div style={{ fontSize: '13px', color: '#712B13' }}>
+                      Supprimer le code <strong>{c.code}</strong> ? Cette action est irréversible.
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        onClick={() => setConfirmer(null)}
+                        style={{ fontSize: '12px', color: '#888', background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer' }}
+                      >
+                        Annuler
+                      </button>
+                      <button
+                        onClick={() => supprimerCode(c.id)}
+                        disabled={supprimant === c.id}
+                        style={{ fontSize: '12px', color: '#fff', background: '#993C1D', border: 'none', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer' }}
+                      >
+                        {supprimant === c.id ? 'Suppression...' : 'Confirmer'}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
