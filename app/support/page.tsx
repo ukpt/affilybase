@@ -14,13 +14,7 @@ export default function Support() {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/login'; return }
-
-      const { data: v } = await supabase
-        .from('vendeurs')
-        .select('*')
-        .eq('email', user.email)
-        .single()
-
+      const { data: v } = await supabase.from('vendeurs').select('*').eq('email', user.email).single()
       setVendeur(v)
       setLoading(false)
     }
@@ -33,7 +27,7 @@ export default function Support() {
   }
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Georgia, serif', color: '#888' }}>
+    <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
       Chargement...
     </div>
   )
@@ -42,15 +36,12 @@ export default function Support() {
 
   return (
     <div className="flex min-h-screen" style={{ background: '#F5F0E8' }}>
-      {/* Sidebar */}
       <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
-        <div className="px-5 pb-6">
-          <Logo size="sm" />
-        </div>
+        <div className="px-5 pb-6"><Logo size="sm" /></div>
         <nav className="flex flex-col">
           {[
             { label: 'Tableau de bord', href: '/' },
-            { label: 'Mes codes', href: '/nouveau-code' },
+            { label: 'Mes codes', href: '/mes-codes' },
             { label: 'Affiliés', href: '/affilies' },
             { label: 'Stats', href: '/stats' },
             { label: 'Paiements', href: '/paiements' },
@@ -58,7 +49,7 @@ export default function Support() {
             { label: 'Support', href: '/support' },
             { label: 'Paramètres', href: '/parametres' },
           ].map(({ label, href }) => (
-            <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
+            <a key={href} href={href} className={`px-5 py-2 text-sm flex items-center gap-2 cursor-pointer hover:text-stone-900 ${label === 'Support' ? 'text-stone-900 font-medium bg-stone-100 border-l-2 border-stone-900' : 'text-stone-500'}`}>
               <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
               {label}
             </a>
@@ -73,8 +64,7 @@ export default function Support() {
         </div>
       </div>
 
-      {/* Main */}
-      <div className="flex-1 p-6" style={{ fontFamily: 'Georgia, serif' }}>
+      <div className="flex-1 p-6">
         <div style={{ marginBottom: '1.5rem' }}>
           <h1 className="text-base font-medium text-stone-900">Support prioritaire</h1>
           <p className="text-xs text-stone-500 mt-0.5">Nous répondons à vos demandes sous 2h</p>
@@ -91,7 +81,7 @@ export default function Support() {
               Sur les autres plans, vous pouvez nous contacter via <a href="/contact" style={{ color: '#2D9B6F' }}>notre page contact</a> avec un délai de réponse de 24h.
             </p>
             <a href="/abonnement" style={{ background: '#2D9B6F', color: '#fff', borderRadius: '6px', padding: '0.75rem 1.5rem', fontSize: '14px', fontWeight: 500, textDecoration: 'none', display: 'inline-block' }}>
-              Passer au plan Business — 39.99€/mois
+              Passer au plan Business — 10€/mois
             </a>
           </div>
         ) : envoye ? (
@@ -105,7 +95,6 @@ export default function Support() {
           </div>
         ) : (
           <div>
-            {/* Badge prioritaire */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#E1F5EE', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '1.25rem' }}>
               <span style={{ fontSize: '16px' }}>⚡</span>
               <div>
@@ -116,10 +105,9 @@ export default function Support() {
 
             <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.5rem', marginBottom: '1.25rem' }}>
               <h2 style={{ fontSize: '15px', fontWeight: 500, marginBottom: '1rem' }}>Nouvelle demande de support</h2>
-              
               <div style={{ marginBottom: '1rem' }}>
                 <label style={{ fontSize: '13px', color: '#555', display: 'block', marginBottom: '6px' }}>Sujet</label>
-                <select value={sujet} onChange={e => setSujet(e.target.value)} style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', fontFamily: 'Georgia, serif', background: '#F5F2EC', outline: 'none' }}>
+                <select value={sujet} onChange={e => setSujet(e.target.value)} style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', background: '#F5F2EC', outline: 'none' }}>
                   <option value="">Sélectionnez un sujet</option>
                   <option value="bug">🐛 Bug / Problème technique</option>
                   <option value="facturation">💳 Facturation / Abonnement</option>
@@ -128,24 +116,15 @@ export default function Support() {
                   <option value="autre">💬 Autre demande</option>
                 </select>
               </div>
-
               <div style={{ marginBottom: '1.25rem' }}>
                 <label style={{ fontSize: '13px', color: '#555', display: 'block', marginBottom: '6px' }}>Description</label>
-                <textarea
-                  value={message}
-                  onChange={e => setMessage(e.target.value)}
-                  placeholder="Décrivez votre problème en détail..."
-                  rows={5}
-                  style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', fontFamily: 'Georgia, serif', background: '#F5F2EC', outline: 'none', resize: 'vertical' }}
-                />
+                <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Décrivez votre problème en détail..." rows={5} style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', background: '#F5F2EC', outline: 'none', resize: 'vertical' }} />
               </div>
-
               <button onClick={handleSubmit} disabled={!sujet || !message} style={{ background: sujet && message ? '#2D9B6F' : '#ccc', color: '#fff', border: 'none', borderRadius: '6px', padding: '0.85rem 1.5rem', fontSize: '14px', fontWeight: 500, cursor: sujet && message ? 'pointer' : 'not-allowed', width: '100%' }}>
                 Envoyer la demande
               </button>
             </div>
 
-            {/* FAQ rapide */}
             <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem' }}>
               <h2 style={{ fontSize: '14px', fontWeight: 500, marginBottom: '12px' }}>Questions fréquentes</h2>
               {[

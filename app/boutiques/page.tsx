@@ -62,7 +62,7 @@ export default function Boutiques() {
   }
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Georgia, serif', color: '#888' }}>
+    <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
       Chargement...
     </div>
   )
@@ -79,14 +79,15 @@ export default function Boutiques() {
         <nav className="flex flex-col">
           {[
             { label: 'Tableau de bord', href: '/' },
-            { label: 'Mes codes', href: '/nouveau-code' },
+            { label: 'Mes codes', href: '/mes-codes' },
             { label: 'Affiliés', href: '/affilies' },
             { label: 'Stats', href: '/stats' },
             { label: 'Paiements', href: '/paiements' },
             { label: 'Boutiques', href: '/boutiques' },
+            { label: 'Support', href: '/support' },
             { label: 'Paramètres', href: '/parametres' },
           ].map(({ label, href }) => (
-            <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
+            <a key={href} href={href} className={`px-5 py-2 text-sm flex items-center gap-2 cursor-pointer hover:text-stone-900 ${label === 'Boutiques' ? 'text-stone-900 font-medium bg-stone-100 border-l-2 border-stone-900' : 'text-stone-500'}`}>
               <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
               {label}
             </a>
@@ -115,9 +116,8 @@ export default function Boutiques() {
           )}
         </div>
 
-        {/* Blocage plan non-Business */}
         {!isPlanBusiness && (
-          <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '3rem', textAlign: 'center', fontFamily: 'Georgia, serif' }}>
+          <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '3rem', textAlign: 'center' }}>
             <div style={{ fontSize: '32px', marginBottom: '1rem' }}>🔒</div>
             <h2 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '0.5rem', color: '#1a1a1a' }}>Multi-boutiques</h2>
             <p style={{ fontSize: '14px', color: '#888', marginBottom: '1.5rem', lineHeight: 1.7 }}>
@@ -125,22 +125,21 @@ export default function Boutiques() {
               Gérez toutes vos boutiques Shopify depuis un seul compte.
             </p>
             <a href="/abonnement" style={{ background: '#2D9B6F', color: '#fff', borderRadius: '6px', padding: '0.75rem 1.5rem', fontSize: '14px', fontWeight: 500, textDecoration: 'none', display: 'inline-block' }}>
-              Passer au plan Business — 39.99€/mois
+              Passer au plan Business — 10€/mois
             </a>
           </div>
         )}
 
-        {/* Formulaire ajout */}
         {isPlanBusiness && ajout && (
-          <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1.25rem', fontFamily: 'Georgia, serif' }}>
+          <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1.25rem' }}>
             <h2 style={{ fontSize: '15px', fontWeight: 500, marginBottom: '1rem' }}>Nouvelle boutique</h2>
             <div style={{ marginBottom: '1rem' }}>
               <label style={{ fontSize: '13px', color: '#555', display: 'block', marginBottom: '6px' }}>Nom de la boutique</label>
-              <input value={nom} onChange={e => setNom(e.target.value)} placeholder="Ma boutique" style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', fontFamily: 'Georgia, serif', background: '#F5F2EC', outline: 'none' }} />
+              <input value={nom} onChange={e => setNom(e.target.value)} placeholder="Ma boutique" style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', background: '#F5F2EC', outline: 'none' }} />
             </div>
             <div style={{ marginBottom: '1.25rem' }}>
               <label style={{ fontSize: '13px', color: '#555', display: 'block', marginBottom: '6px' }}>URL Shopify</label>
-              <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://ma-boutique.myshopify.com" style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', fontFamily: 'Georgia, serif', background: '#F5F2EC', outline: 'none' }} />
+              <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://ma-boutique.myshopify.com" style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', background: '#F5F2EC', outline: 'none' }} />
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={ajouterBoutique} disabled={!nom || !url} style={{ background: nom && url ? '#2D9B6F' : '#ccc', color: '#fff', border: 'none', borderRadius: '6px', padding: '0.75rem 1.5rem', fontSize: '14px', cursor: nom && url ? 'pointer' : 'not-allowed' }}>
@@ -153,9 +152,8 @@ export default function Boutiques() {
           </div>
         )}
 
-        {/* Liste boutiques */}
         {isPlanBusiness && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontFamily: 'Georgia, serif' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {boutiques.length === 0 ? (
               <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '2rem', textAlign: 'center' }}>
                 <p style={{ fontSize: '14px', color: '#888' }}>Aucune boutique ajoutée — cliquez sur "+ Ajouter une boutique"</p>
