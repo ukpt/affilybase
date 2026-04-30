@@ -48,6 +48,20 @@ export default function NouveauCode() {
 
     const { data: affilie } = await supabase.from('affilies').insert({ vendeur_id: vendeurId, nom, email }).select('id').single()
 
+    // Créer le compte Auth pour l'affilié
+    await fetch('/api/create-affilie', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        nom,
+        vendeurId,
+        code: code.toUpperCase(),
+        commissionPct: parseInt(commission),
+        remisePct: parseInt(remise),
+      })
+    })
+
     const { error } = await supabase.from('codes').insert({
       vendeur_id: vendeurId,
       affilie_id: affilie?.id,
@@ -104,7 +118,8 @@ export default function NouveauCode() {
                 {code.toUpperCase()}
               </div>
               <p className="text-sm text-stone-500 mb-2">Le code a été créé dans votre boutique Shopify !</p>
-              <p className="text-sm text-stone-500 mb-6">L'affilié <strong>{nom}</strong> peut maintenant l'utiliser.</p>
+              <p className="text-sm text-stone-500 mb-2">Un email d'invitation a été envoyé à <strong>{nom}</strong>.</p>
+              <p className="text-sm text-stone-500 mb-6">Il peut maintenant se connecter sur son espace affilié.</p>
               <div className="flex flex-col gap-2">
                 <button onClick={() => window.location.href = '/'} className="w-full bg-stone-900 text-white text-sm font-medium py-2.5 rounded-lg cursor-pointer hover:bg-stone-700">
                   Voir le dashboard
@@ -190,6 +205,7 @@ export default function NouveauCode() {
                   <div className="flex justify-between text-xs"><span className="text-stone-500">Commission affilié</span><span className="text-stone-900 font-medium">{commission ? commission + '%' : '—'}</span></div>
                   <div className="flex justify-between text-xs"><span className="text-stone-500">Remise acheteur</span><span className="text-stone-900 font-medium">{remise ? remise + '%' : '—'}</span></div>
                   <div className="flex justify-between text-xs"><span className="text-stone-500">Créé dans Shopify</span><span className="text-green-700 font-medium">Automatiquement</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-stone-500">Invitation affilié</span><span className="text-green-700 font-medium">Par email</span></div>
                 </div>
               </div>
 
