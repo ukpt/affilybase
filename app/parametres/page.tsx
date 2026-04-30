@@ -1,4 +1,6 @@
 'use client'
+import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabase'
 import Logo from '../components/Logo'
 
 const menuItems = [
@@ -13,26 +15,230 @@ const menuItems = [
 ]
 
 export default function Parametres() {
+  const [vendeur, setVendeur] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [typeBoutique, setTypeBoutique] = useState<'shopify' | 'autre'>('shopify')
+
+  const [nom, setNom] = useState('')
+  const [email, setEmail] = useState('')
+  const [shopifyUrl, setShopifyUrl] = useState('')
+  const [messageAccueil, setMessageAccueil] = useState("On est vraiment contents de t'avoir avec nous dans notre programme d'affiliation !")
+  const [devise, setDevise] = useState('€')
+  const [logoUrl, setLogoUrl] = useState('')
+
+  useEffect(() => {
+    const init = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { window.location.href = '/login'; return }
+
+      const { data: v } = await supabase.from('vendeurs').select('*').eq('email', user.email).single()
+      if (v) {
+        setVendeur(v)
+        setNom(v.nom || '')
+        setEmail(v.email || '')
+        setShopifyUrl(v.shopify_url || '')
+        setMessageAccueil(v.message_accueil || "On est vraiment contents de t'avoir avec nous dans notre programme d'affiliation !")
+        setDevise(v.devise || '€')
+        setLogoUrl(v.logo_url || '')
+        setTypeBoutique(v.shopify_url ? 'shopify' : 'autre')
+      }
+      setLoading(false)
+    }
+    init()
+  }, [])
+
+  const handleSave = async () => {
+    if (!vendeur) return
+    setSaving(true)
+    await supabase.from('vendeurs').update({
+      nom,
+      shopify_url: typeBoutique === 'shopify' ? shopifyUrl : null,
+      message_accueil: messageAccueil,
+      devise,
+    }).eq('id', vendeur.id)
+    setSaving(false)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+  }
+
+  const handleLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !vendeur) return
+    const ext = file.name.split('.').pop()
+    const path = `logos/${vendeur.id}.${ext}`
+    await supabase.storage.from('assets').upload(path, file, { upsert: true })
+    const { data } = supabase.storage.from('assets').getPublicUrl(path)
+    setLogoUrl(data.publicUrl)
+    await supabase.from('vendeurs').update({ logo_url: data.publicUrl }).eq('id', vendeur.id)
+  }
+
+  if (loading) return (
+    <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
+      Chargement...
+    </div>
+  )
+
+  const lienAffilie = `affilybase.com/r/${(nom || vendeur?.email?.split('@')[0] || 'maboutique').toUpperCase().replace(/\s/g, '')}`
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
+      {/* Sidebar */}
       <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
         <div className="px-5 pb-6"><Logo size="sm" /></div>
         <nav className="flex flex-col">
-          <div className="px-5 py-2 text-sm font-medium text-stone-900 bg-stone-100 border-l-2 border-stone-900 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-stone-900 inline-block"></span>
-            Paramètres
-          </div>
-          {menuItems.filter(i => i.label !== 'Paramètres').map(({ label, href }) => (
-            <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 hover:text-stone-900">
+          {menuItems.map(({ label, href }) => (
+            <a key={href} href={href} className={`px-5 py-2 text-sm flex items-center gap-2 cursor-pointer hover:text-stone-900 ${label === 'Paramètres' ? 'text-stone-900 font-medium bg-stone-100 border-l-2 border-stone-900' : 'text-stone-500'}`}>
               <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
               {label}
             </a>
           ))}
         </nav>
+        <div className="mt-auto px-5 pb-4">
+          <div className="text-xs text-stone-400 mb-1">Connecté en tant que</div>
+          <div className="text-xs text-stone-600 font-medium truncate">{vendeur?.email}</div>
+          <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login' }} className="mt-3 text-xs text-stone-400 hover:text-stone-600 cursor-pointer">
+            Se déconnecter
+          </button>
+        </div>
       </div>
-      <div style={{ flex: 1, padding: '2rem', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '20px', fontWeight: 500, marginBottom: '1rem' }}>Paramètres</h1>
-        <p style={{ color: '#888', fontSize: '14px' }}>Fonctionnalité disponible prochainement.</p>
+
+      {/* Main */}
+      <div style={{ flex: 1, padding: '1.5rem', maxWidth: '720px' }}>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <h1 style={{ fontSize: '16px', fontWeight: 500, marginBottom: '2px', color: '#1a1a1a' }}>Paramètres</h1>
+          <p style={{ fontSize: '12px', color: '#888' }}>Configurez votre compte et votre programme d'affiliation</p>
+        </div>
+
+        {/* Profil entreprise */}
+        <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1rem' }}>
+          <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '1rem', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>Profil entreprise</div>
+
+          {/* Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '1rem' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '8px', background: '#F5F2EC', border: '0.5px solid #ddd8ce', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+              {logoUrl ? <img src={logoUrl} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              )}
+            </div>
+            <div>
+              <div style={{ fontSize: '13px', marginBottom: '4px' }}>Logo de l'entreprise</div>
+              <div style={{ fontSize: '11px', color: '#888', marginBottom: '8px' }}>PNG, JPG — max 2 Mo — recommandé 200×200px</div>
+              <label style={{ display: 'inline-block', background: '#F5F2EC', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer' }}>
+                Choisir un fichier
+                <input type="file" accept="image/*" onChange={handleLogo} style={{ display: 'none' }} />
+              </label>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Nom de l'entreprise</div>
+              <input value={nom} onChange={e => setNom(e.target.value)} placeholder="Ma Boutique" style={{ width: '100%', padding: '8px 12px', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '13px', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
+            </div>
+            <div>
+              <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Email de contact</div>
+              <input value={email} disabled style={{ width: '100%', padding: '8px 12px', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '13px', background: '#F5F2EC', outline: 'none', color: '#aaa', boxSizing: 'border-box' }} />
+            </div>
+          </div>
+        </div>
+
+        {/* Boutique */}
+        <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1rem' }}>
+          <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '1rem', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>Boutique</div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Type de boutique</div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button onClick={() => setTypeBoutique('shopify')} style={{ flex: 1, background: typeBoutique === 'shopify' ? '#1a1a1a' : '#F5F2EC', color: typeBoutique === 'shopify' ? '#fff' : '#555', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', cursor: 'pointer' }}>
+                Shopify
+              </button>
+              <button onClick={() => setTypeBoutique('autre')} style={{ flex: 1, background: typeBoutique === 'autre' ? '#1a1a1a' : '#F5F2EC', color: typeBoutique === 'autre' ? '#fff' : '#555', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', cursor: 'pointer' }}>
+                Autre / Sans boutique
+              </button>
+            </div>
+          </div>
+
+          {typeBoutique === 'shopify' && (
+            <div style={{ marginBottom: '12px' }}>
+              <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>URL Shopify</div>
+              <input value={shopifyUrl} onChange={e => setShopifyUrl(e.target.value)} placeholder="ma-boutique.myshopify.com" style={{ width: '100%', padding: '8px 12px', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '13px', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
+            </div>
+          )}
+
+          <div style={{ background: '#E1F5EE', borderRadius: '8px', padding: '10px 14px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 500, color: '#085041', marginBottom: '3px' }}>Lien affilié pour les boutiques sans Shopify</div>
+            <div style={{ fontSize: '12px', color: '#0F6E56', marginBottom: '8px' }}>Partagez ce lien à vos affiliés s'ils n'ont pas de boutique Shopify. Les clics seront trackés automatiquement.</div>
+            <div style={{ background: '#fff', borderRadius: '6px', padding: '7px 12px', fontSize: '12px', color: '#1D9E75', fontFamily: 'monospace' }}>
+              {lienAffilie}
+            </div>
+          </div>
+        </div>
+
+        {/* Message de bienvenue */}
+        <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1rem' }}>
+          <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>Message de bienvenue</div>
+          <div style={{ fontSize: '12px', color: '#888', marginBottom: '12px' }}>Ce message est envoyé par email à vos affiliés quand vous créez leur code. Personnalisez-le pour créer une vraie relation !</div>
+
+          <div style={{ background: '#F5F2EC', borderRadius: '8px', padding: '1rem', marginBottom: '12px', borderLeft: '3px solid #1D9E75' }}>
+            <div style={{ fontSize: '12px', color: '#888', marginBottom: '8px' }}>Aperçu de l'email reçu par l'affilié</div>
+            <div style={{ fontSize: '13px', color: '#1a1a1a', lineHeight: 1.7 }}>
+              Bonjour <span style={{ color: '#1D9E75', fontWeight: 500 }}>[Prénom]</span> 👋<br />
+              <br />
+              Super nouvelle — tu rejoins notre programme d'affiliation !<br />
+              <br />
+              Ton code promo personnel : <span style={{ fontFamily: 'monospace', fontWeight: 500, background: '#fff', padding: '2px 8px', borderRadius: '4px' }}>MARIE20</span><br />
+              <br />
+              {messageAccueil}<br />
+              <br />
+              <span style={{ color: '#888' }}>— L'équipe {nom || 'Ma Boutique'}</span>
+            </div>
+          </div>
+
+          <div>
+            <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Votre message personnalisé</div>
+            <textarea value={messageAccueil} onChange={e => setMessageAccueil(e.target.value)} rows={3} style={{ width: '100%', padding: '8px 12px', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '13px', background: '#F5F2EC', outline: 'none', resize: 'vertical', lineHeight: 1.6, boxSizing: 'border-box' }} />
+            <div style={{ fontSize: '11px', color: '#aaa', marginTop: '4px' }}>Variables disponibles : [Prénom], [Code], [Commission], [Remise]</div>
+          </div>
+        </div>
+
+        {/* Compte */}
+        <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1rem' }}>
+          <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '1rem', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>Compte</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <div>
+              <div style={{ fontSize: '12px', color: '#888', marginBottom: '2px' }}>Plan actuel</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 500 }}>{vendeur?.plan === 'starter' ? 'Starter' : vendeur?.plan === 'business' ? 'Business' : 'Gratuit'}</div>
+                <div style={{ background: vendeur?.plan === 'starter' ? '#E1F5EE' : vendeur?.plan === 'business' ? '#EEEDFE' : '#FAEEDA', color: vendeur?.plan === 'starter' ? '#085041' : vendeur?.plan === 'business' ? '#3C3489' : '#633806', fontSize: '11px', padding: '2px 8px', borderRadius: '4px' }}>
+                  {vendeur?.plan === 'starter' ? 'Starter' : vendeur?.plan === 'business' ? 'Business' : 'Free'}
+                </div>
+              </div>
+            </div>
+            {vendeur?.plan !== 'business' && (
+              <a href="/abonnement" style={{ background: '#1D9E75', color: '#fff', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}>
+                {vendeur?.plan === 'starter' ? 'Passer au Business' : 'Passer au Starter'}
+              </a>
+            )}
+          </div>
+          <div style={{ borderTop: '0.5px solid #ddd8ce', paddingTop: '12px' }}>
+            <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Changer le mot de passe</div>
+            <button onClick={async () => {
+              await supabase.auth.resetPasswordForEmail(vendeur?.email)
+              alert('Un email de réinitialisation a été envoyé !')
+            }} style={{ background: '#F5F2EC', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '8px 16px', fontSize: '12px', color: '#555', cursor: 'pointer' }}>
+              Envoyer un email de réinitialisation
+            </button>
+          </div>
+        </div>
+
+        {/* Sauvegarder */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button onClick={handleSave} disabled={saving} style={{ background: saved ? '#1D9E75' : '#1a1a1a', color: '#fff', borderRadius: '6px', padding: '10px 24px', fontSize: '13px', fontWeight: 500, cursor: 'pointer', border: 'none', transition: 'background 0.2s' }}>
+            {saving ? 'Sauvegarde...' : saved ? '✓ Sauvegardé !' : 'Sauvegarder les modifications'}
+          </button>
+        </div>
       </div>
     </div>
   )
