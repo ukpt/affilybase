@@ -20,19 +20,19 @@ export default function Parametres() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [typeBoutique, setTypeBoutique] = useState<'shopify' | 'autre'>('shopify')
-
   const [nom, setNom] = useState('')
   const [email, setEmail] = useState('')
   const [shopifyUrl, setShopifyUrl] = useState('')
   const [messageAccueil, setMessageAccueil] = useState("On est vraiment contents de t'avoir avec nous dans notre programme d'affiliation !")
   const [devise, setDevise] = useState('€')
   const [logoUrl, setLogoUrl] = useState('')
+  const [showResilier, setShowResilier] = useState(false)
+  const [resiliating, setResiliating] = useState(false)
 
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/login'; return }
-
       const { data: v } = await supabase.from('vendeurs').select('*').eq('email', user.email).single()
       if (v) {
         setVendeur(v)
@@ -74,6 +74,19 @@ export default function Parametres() {
     await supabase.from('vendeurs').update({ logo_url: data.publicUrl }).eq('id', vendeur.id)
   }
 
+  const handleResilier = async () => {
+    if (!vendeur) return
+    setResiliating(true)
+    await fetch('/api/cancel-subscription', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ vendeurId: vendeur.id })
+    })
+    setVendeur((prev: any) => ({ ...prev, plan_cancel_at_period_end: true }))
+    setShowResilier(false)
+    setResiliating(false)
+  }
+
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
       Chargement...
@@ -84,7 +97,6 @@ export default function Parametres() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
-      {/* Sidebar */}
       <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
         <div className="px-5 pb-6"><Logo size="sm" /></div>
         <nav className="flex flex-col">
@@ -104,7 +116,6 @@ export default function Parametres() {
         </div>
       </div>
 
-      {/* Main */}
       <div style={{ flex: 1, padding: '1.5rem', maxWidth: '720px' }}>
         <div style={{ marginBottom: '1.5rem' }}>
           <h1 style={{ fontSize: '16px', fontWeight: 500, marginBottom: '2px', color: '#1a1a1a' }}>Paramètres</h1>
@@ -114,8 +125,6 @@ export default function Parametres() {
         {/* Profil entreprise */}
         <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1rem' }}>
           <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '1rem', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>Profil entreprise</div>
-
-          {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '1rem' }}>
             <div style={{ width: '56px', height: '56px', borderRadius: '8px', background: '#F5F2EC', border: '0.5px solid #ddd8ce', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
               {logoUrl ? <img src={logoUrl} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (
@@ -131,7 +140,6 @@ export default function Parametres() {
               </label>
             </div>
           </div>
-
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
               <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Nom de l'entreprise</div>
@@ -147,7 +155,6 @@ export default function Parametres() {
         {/* Boutique */}
         <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1rem' }}>
           <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '1rem', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>Boutique</div>
-
           <div style={{ marginBottom: '12px' }}>
             <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Type de boutique</div>
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -159,14 +166,12 @@ export default function Parametres() {
               </button>
             </div>
           </div>
-
           {typeBoutique === 'shopify' && (
             <div style={{ marginBottom: '12px' }}>
               <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>URL Shopify</div>
               <input value={shopifyUrl} onChange={e => setShopifyUrl(e.target.value)} placeholder="ma-boutique.myshopify.com" style={{ width: '100%', padding: '8px 12px', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '13px', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
             </div>
           )}
-
           <div style={{ background: '#E1F5EE', borderRadius: '8px', padding: '10px 14px' }}>
             <div style={{ fontSize: '12px', fontWeight: 500, color: '#085041', marginBottom: '3px' }}>Lien affilié pour les boutiques sans Shopify</div>
             <div style={{ fontSize: '12px', color: '#0F6E56', marginBottom: '8px' }}>Partagez ce lien à vos affiliés s'ils n'ont pas de boutique Shopify. Les clics seront trackés automatiquement.</div>
@@ -180,7 +185,6 @@ export default function Parametres() {
         <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1rem' }}>
           <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>Message de bienvenue</div>
           <div style={{ fontSize: '12px', color: '#888', marginBottom: '12px' }}>Ce message est envoyé par email à vos affiliés quand vous créez leur code. Personnalisez-le pour créer une vraie relation !</div>
-
           <div style={{ background: '#F5F2EC', borderRadius: '8px', padding: '1rem', marginBottom: '12px', borderLeft: '3px solid #1D9E75' }}>
             <div style={{ fontSize: '12px', color: '#888', marginBottom: '8px' }}>Aperçu de l'email reçu par l'affilié</div>
             <div style={{ fontSize: '13px', color: '#1a1a1a', lineHeight: 1.7 }}>
@@ -195,7 +199,6 @@ export default function Parametres() {
               <span style={{ color: '#888' }}>— L'équipe {nom || 'Ma Boutique'}</span>
             </div>
           </div>
-
           <div>
             <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Votre message personnalisé</div>
             <textarea value={messageAccueil} onChange={e => setMessageAccueil(e.target.value)} rows={3} style={{ width: '100%', padding: '8px 12px', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '13px', background: '#F5F2EC', outline: 'none', resize: 'vertical', lineHeight: 1.6, boxSizing: 'border-box' }} />
@@ -214,15 +217,21 @@ export default function Parametres() {
                 <div style={{ background: vendeur?.plan === 'starter' ? '#E1F5EE' : vendeur?.plan === 'business' ? '#EEEDFE' : '#FAEEDA', color: vendeur?.plan === 'starter' ? '#085041' : vendeur?.plan === 'business' ? '#3C3489' : '#633806', fontSize: '11px', padding: '2px 8px', borderRadius: '4px' }}>
                   {vendeur?.plan === 'starter' ? 'Starter' : vendeur?.plan === 'business' ? 'Business' : 'Free'}
                 </div>
+                {vendeur?.plan_cancel_at_period_end && (
+                  <div style={{ fontSize: '11px', color: '#D85A30', background: '#FAECE7', padding: '2px 8px', borderRadius: '4px' }}>
+                    Résiliation en cours
+                  </div>
+                )}
               </div>
             </div>
-            {vendeur?.plan !== 'business' && (
+            {vendeur?.plan !== 'business' && !vendeur?.plan_cancel_at_period_end && (
               <a href="/abonnement" style={{ background: '#1D9E75', color: '#fff', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}>
                 {vendeur?.plan === 'starter' ? 'Passer au Business' : 'Passer au Starter'}
               </a>
             )}
           </div>
-          <div style={{ borderTop: '0.5px solid #ddd8ce', paddingTop: '12px' }}>
+
+          <div style={{ borderTop: '0.5px solid #ddd8ce', paddingTop: '12px', marginBottom: '12px' }}>
             <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Changer le mot de passe</div>
             <button onClick={async () => {
               await supabase.auth.resetPasswordForEmail(vendeur?.email)
@@ -231,6 +240,37 @@ export default function Parametres() {
               Envoyer un email de réinitialisation
             </button>
           </div>
+
+          {vendeur?.plan !== 'free' && !vendeur?.plan_cancel_at_period_end && (
+            <div style={{ borderTop: '0.5px solid #ddd8ce', paddingTop: '12px' }}>
+              {!showResilier ? (
+                <button onClick={() => setShowResilier(true)} style={{ fontSize: '12px', color: '#D85A30', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                  Résilier mon abonnement
+                </button>
+              ) : (
+                <div style={{ background: '#FAECE7', borderRadius: '8px', padding: '1rem' }}>
+                  <div style={{ fontSize: '13px', color: '#712B13', marginBottom: '10px', fontWeight: 500 }}>Confirmer la résiliation</div>
+                  <div style={{ fontSize: '12px', color: '#993C1D', marginBottom: '12px', lineHeight: 1.6 }}>
+                    Votre abonnement restera actif jusqu'à la fin de la période en cours. Après cette date, votre compte repassera en plan gratuit (1 code maximum).
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button onClick={() => setShowResilier(false)} style={{ fontSize: '12px', color: '#555', background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '6px 14px', cursor: 'pointer' }}>
+                      Annuler
+                    </button>
+                    <button onClick={handleResilier} disabled={resiliating} style={{ fontSize: '12px', color: '#fff', background: '#993C1D', border: 'none', borderRadius: '6px', padding: '6px 14px', cursor: 'pointer' }}>
+                      {resiliating ? 'Résiliation...' : 'Confirmer la résiliation'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {vendeur?.plan_cancel_at_period_end && (
+            <div style={{ borderTop: '0.5px solid #ddd8ce', paddingTop: '12px', fontSize: '12px', color: '#D85A30' }}>
+              Votre abonnement sera résilié à la fin de la période en cours.
+            </div>
+          )}
         </div>
 
         {/* Sauvegarder */}
