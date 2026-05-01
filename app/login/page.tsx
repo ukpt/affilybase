@@ -23,7 +23,6 @@ export default function Login() {
       if (error) {
         setMessage(error.message)
       } else {
-        // Vérifier si c'est un vendeur d'abord
         const { data: vendeur } = await supabase
           .from('vendeurs')
           .select('id')
@@ -33,7 +32,6 @@ export default function Login() {
         if (vendeur) {
           window.location.href = '/'
         } else {
-          // Vérifier si c'est un affilié
           const { data: affilie } = await supabase
             .from('affilies')
             .select('id')
@@ -105,7 +103,7 @@ export default function Login() {
             </div>
 
             {message && (
-              <div className={`text-xs text-center py-2 px-3 rounded-lg border ${message.includes('Compte créé') ? 'bg-green-50 text-green-700 border-green-200' : 'bg-stone-50 text-stone-600 border-stone-200'}`}>
+              <div className={`text-xs text-center py-2 px-3 rounded-lg border ${message.includes('Compte créé') || message.includes('envoyé') ? 'bg-green-50 text-green-700 border-green-200' : 'bg-stone-50 text-stone-600 border-stone-200'}`}>
                 {message}
               </div>
             )}
@@ -128,7 +126,9 @@ export default function Login() {
           <p
             onClick={async () => {
               if (!email) { setMessage('Entrez votre email d\'abord'); return }
-              await supabase.auth.resetPasswordForEmail(email)
+              await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: 'https://www.affilybase.com/reset-password'
+              })
               setMessage('Email de réinitialisation envoyé !')
             }}
             className="text-center text-xs text-stone-400 cursor-pointer hover:text-stone-600"
