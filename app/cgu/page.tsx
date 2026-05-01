@@ -16,7 +16,7 @@ export default function CGU() {
       {[
         {
           title: '1. Objet',
-          content: "Les présentes Conditions Générales d'Utilisation (CGU) régissent l'utilisation de la plateforme Affilybase, accessible à l'adresse affilybase.vercel.app. En utilisant Affilybase, vous acceptez sans réserve les présentes CGU."
+          content: "Les présentes Conditions Générales d'Utilisation (CGU) régissent l'utilisation de la plateforme Affilybase, accessible à l'adresse affilybase.com. En utilisant Affilybase, vous acceptez sans réserve les présentes CGU."
         },
         {
           title: '2. Description du service',
@@ -28,7 +28,7 @@ export default function CGU() {
         },
         {
           title: '4. Plans et tarification',
-          content: "Affilybase propose plusieurs plans d'abonnement : Free (gratuit, 1 mois d'essai), Starter (5€/mois), Pro (9.99€/mois) et Business (39.99€/mois). Les prix sont indiqués en euros TTC. Vous pouvez changer de plan ou résilier à tout moment, sans engagement."
+          content: "Affilybase propose plusieurs plans d'abonnement : Free (gratuit, 1 mois d'essai), Starter (4.99€/mois), Pro (9.99€/mois) et Business (39.99€/mois). Les prix sont indiqués en euros TTC. Vous pouvez changer de plan ou résilier à tout moment, sans engagement."
         },
         {
           title: '5. Paiement des commissions',

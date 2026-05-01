@@ -24,7 +24,7 @@ export default function Confidentialite() {
         },
         {
           title: '3. Partage des données',
-          content: "Affilybase ne vend ni ne loue vos données personnelles à des tiers. Vos données peuvent être partagées avec nos prestataires techniques (Supabase pour la base de données, Vercel pour l'hébergement, Stripe pour les paiements) dans le strict cadre de la fourniture du service."
+          content: "Affilybase ne vend ni ne loue vos données personnelles à des tiers. Vos données peuvent être partagées avec nos prestataires techniques (Supabase pour la base de données, Vercel pour l'hébergement, Stripe pour les paiements, Resend pour l'envoi d'emails) dans le strict cadre de la fourniture du service."
         },
         {
           title: '4. Cookies',
