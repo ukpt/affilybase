@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
       const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer
       const email = customer.email
 
-      if (email && invoice.subscription) {
+      if (email) {
         await supabaseAdmin.from('vendeurs').update({
           plan_cancel_at_period_end: false,
         }).eq('email', email)
