@@ -23,17 +23,28 @@ export default function Login() {
       if (error) {
         setMessage(error.message)
       } else {
-        // Vérifier si c'est un affilié ou un vendeur
-        const { data: affilie } = await supabase
-          .from('affilies')
+        // Vérifier si c'est un vendeur d'abord
+        const { data: vendeur } = await supabase
+          .from('vendeurs')
           .select('id')
           .eq('email', email)
           .single()
 
-        if (affilie) {
-          window.location.href = '/affilie'
-        } else {
+        if (vendeur) {
           window.location.href = '/'
+        } else {
+          // Vérifier si c'est un affilié
+          const { data: affilie } = await supabase
+            .from('affilies')
+            .select('id')
+            .eq('email', email)
+            .single()
+
+          if (affilie) {
+            window.location.href = '/affilie'
+          } else {
+            window.location.href = '/'
+          }
         }
       }
     }
