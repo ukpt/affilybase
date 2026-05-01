@@ -28,37 +28,44 @@ export default function Dashboard() {
   const [userEmail, setUserEmail] = useState('')
 
   useEffect(() => {
-    const init = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { window.location.href = '/landing'; return }
-      const { data: affilieCheck } = await supabase
-        .from('affilies')
-        .select('id')
-        .eq('email', user.email)
-        .single()
-
-      if (affilieCheck) { window.location.href = '/affilie'; return }
-      setUserEmail(user.email || '')
-
-      const { data: v } = await supabase
-        .from('vendeurs')
-        .select('*')
-        .eq('email', user.email)
-        .single()
-      setVendeur(v)
-
-      if (v) {
-        const { data: c } = await supabase
-          .from('codes')
-          .select('*, affilies(nom, email)')
-          .eq('vendeur_id', v.id)
-          .order('created_at', { ascending: false })
-        setCodes(c || [])
-      }
-      setLoading(false)
+  const init = async () => {
+    // Détecter si c'est un lien de reset password
+    const hash = window.location.hash
+    if (hash && hash.includes('type=recovery')) {
+      window.location.href = '/reset-password' + hash
+      return
     }
-    init()
-  }, [])
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { window.location.href = '/landing'; return }
+    const { data: affilieCheck } = await supabase
+      .from('affilies')
+      .select('id')
+      .eq('email', user.email)
+      .single()
+
+    if (affilieCheck) { window.location.href = '/affilie'; return }
+    setUserEmail(user.email || '')
+
+    const { data: v } = await supabase
+      .from('vendeurs')
+      .select('*')
+      .eq('email', user.email)
+      .single()
+    setVendeur(v)
+
+    if (v) {
+      const { data: c } = await supabase
+        .from('codes')
+        .select('*, affilies(nom, email)')
+        .eq('vendeur_id', v.id)
+        .order('created_at', { ascending: false })
+      setCodes(c || [])
+    }
+    setLoading(false)
+  }
+  init()
+}, [])
 
   const totalCodes = codes.length
   const codesActifs = codes.filter(c => c.actif).length
