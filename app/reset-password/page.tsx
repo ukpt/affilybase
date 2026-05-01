@@ -11,11 +11,30 @@ export default function ResetPassword() {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setReady(true)
+    // Lire le hash de l'URL pour récupérer le token
+    const hash = window.location.hash
+    if (hash && hash.includes('access_token')) {
+      const params = new URLSearchParams(hash.substring(1))
+      const accessToken = params.get('access_token')
+      const refreshToken = params.get('refresh_token')
+      
+      if (accessToken && refreshToken) {
+        supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        }).then(() => {
+          setReady(true)
+        })
       }
-    })
+    } else {
+      // Écouter l'événement PASSWORD_RECOVERY
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          setReady(true)
+        }
+      })
+      return () => subscription.unsubscribe()
+    }
   }, [])
 
   const handleReset = async () => {
@@ -33,7 +52,7 @@ export default function ResetPassword() {
       setMessage(error.message)
     } else {
       setMessage('Mot de passe mis à jour avec succès !')
-      setTimeout(() => window.location.href = '/', 2000)
+      setTimeout(() => window.location.href = '/login', 2000)
     }
     setLoading(false)
   }
@@ -49,6 +68,12 @@ export default function ResetPassword() {
           <h1 className="text-base font-medium text-stone-900 mb-1">Nouveau mot de passe</h1>
           <p className="text-sm text-stone-500 mb-6">Choisissez un nouveau mot de passe pour votre compte.</p>
 
+          {!ready && (
+            <div className="text-xs text-center py-2 px-3 rounded-lg border bg-stone-50 text-stone-600 border-stone-200 mb-4">
+              Vérification du lien en cours...
+            </div>
+          )}
+
           <div className="flex flex-col gap-4">
             <div>
               <label className="text-xs font-medium text-stone-700 block mb-1.5">Nouveau mot de passe</label>
@@ -57,7 +82,8 @@ export default function ResetPassword() {
                 placeholder="••••••••"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm text-stone-900 outline-none focus:border-stone-400"
+                disabled={!ready}
+                className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm text-stone-900 outline-none focus:border-stone-400 disabled:opacity-50"
                 style={{ background: '#FDFAF5' }}
               />
             </div>
@@ -69,7 +95,8 @@ export default function ResetPassword() {
                 placeholder="••••••••"
                 value={confirm}
                 onChange={e => setConfirm(e.target.value)}
-                className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm text-stone-900 outline-none focus:border-stone-400"
+                disabled={!ready}
+                className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm text-stone-900 outline-none focus:border-stone-400 disabled:opacity-50"
                 style={{ background: '#FDFAF5' }}
               />
             </div>
@@ -82,7 +109,7 @@ export default function ResetPassword() {
 
             <button
               onClick={handleReset}
-              disabled={loading}
+              disabled={loading || !ready}
               className="w-full bg-stone-900 text-white text-sm font-medium py-2.5 rounded-lg mt-2 cursor-pointer hover:bg-stone-700 disabled:opacity-50"
             >
               {loading ? 'Mise à jour...' : 'Mettre à jour le mot de passe'}
