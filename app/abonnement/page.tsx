@@ -43,7 +43,7 @@ export default function Abonnement() {
     {
       id: 'starter',
       name: 'Starter',
-      price: '4.90€',
+      price: '4.99€',
       period: '/mois',
       description: 'Pour démarrer simplement',
       features: ['20 codes actifs', '20 affiliés', 'Lien court personnalisé', 'Dashboard brandé', 'Paiement automatique affilié', 'Support email'],
@@ -53,7 +53,7 @@ export default function Abonnement() {
     {
       id: 'pro',
       name: 'Pro',
-      price: '9.90€',
+      price: '9.99€',
       period: '/mois',
       description: 'Pour développer son réseau',
       features: ['50 codes actifs', '50 affiliés', 'Lien court personnalisé', 'Dashboard brandé', 'Paiement automatique affilié', 'Analytics avancés', 'Support prioritaire'],
@@ -63,7 +63,7 @@ export default function Abonnement() {
     {
       id: 'business',
       name: 'Business',
-      price: '39.90€',
+      price: '39.99€',
       period: '/mois',
       description: 'Pour scaler sans limites',
       features: ['Codes illimités', 'Affiliés illimités', 'Lien court personnalisé', 'Dashboard brandé', 'Paiement automatique affilié', 'Analytics avancés', 'Multi-boutiques', 'Support dédié'],
