@@ -17,6 +17,8 @@ const menuItems = [
 export default function Affilies() {
   const [affilies, setAffilies] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [confirmer, setConfirmer] = useState<string | null>(null)
+  const [supprimant, setSupprimant] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchAffilies = async () => {
@@ -30,6 +32,20 @@ export default function Affilies() {
     }
     fetchAffilies()
   }, [])
+
+  const supprimerAffilie = async (affilie: any) => {
+    setSupprimant(affilie.id)
+    // Supprimer les ventes liées aux codes de l'affilié
+    for (const code of affilie.codes || []) {
+      await supabase.from('ventes').delete().eq('code_id', code.id)
+      await supabase.from('codes').delete().eq('id', code.id)
+    }
+    // Supprimer l'affilié
+    await supabase.from('affilies').delete().eq('id', affilie.id)
+    setAffilies(prev => prev.filter(a => a.id !== affilie.id))
+    setSupprimant(null)
+    setConfirmer(null)
+  }
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
@@ -66,12 +82,45 @@ export default function Affilies() {
         {!loading && affilies.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {affilies.map((a) => (
-              <div key={a.id} style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <div style={{ fontSize: '14px', fontWeight: 500 }}>{a.nom}</div>
-                  <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>{a.email}</div>
+              <div key={a.id} style={{ background: '#fff', border: `0.5px solid ${confirmer === a.id ? '#f0997b' : '#ddd8ce'}`, borderRadius: '10px', padding: '1rem 1.25rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 500 }}>{a.nom}</div>
+                    <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>{a.email}</div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ fontSize: '12px', color: '#2D9B6F' }}>{a.codes?.length || 0} code(s)</div>
+                    <button
+                      onClick={() => setConfirmer(confirmer === a.id ? null : a.id)}
+                      style={{ fontSize: '12px', color: '#888', background: 'none', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer' }}
+                    >
+                      Supprimer
+                    </button>
+                  </div>
                 </div>
-                <div style={{ fontSize: '12px', color: '#2D9B6F' }}>{a.codes?.length || 0} code(s)</div>
+
+                {confirmer === a.id && (
+                  <div style={{ marginTop: '12px', background: '#FAECE7', borderRadius: '6px', padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                    <div style={{ fontSize: '13px', color: '#712B13' }}>
+                      Supprimer <strong>{a.nom}</strong> et tous ses codes ? Action irréversible.
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        onClick={() => setConfirmer(null)}
+                        style={{ fontSize: '12px', color: '#888', background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer' }}
+                      >
+                        Annuler
+                      </button>
+                      <button
+                        onClick={() => supprimerAffilie(a)}
+                        disabled={supprimant === a.id}
+                        style={{ fontSize: '12px', color: '#fff', background: '#993C1D', border: 'none', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer' }}
+                      >
+                        {supprimant === a.id ? 'Suppression...' : 'Confirmer'}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
