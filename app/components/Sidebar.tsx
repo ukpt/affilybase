@@ -54,7 +54,8 @@ export default function Sidebar({ active, email }: { active: string, email?: str
       {/* Mobile menu overlay */}
       {open && (
         <div className="md:hidden fixed inset-0 z-40" style={{ background: 'rgba(0,0,0,0.3)' }} onClick={() => setOpen(false)}>
-          <div style={{ background: '#fff', width: '260px', height: '100%', padding: '70px 0 20px' }} onClick={e => e.stopPropagation()}>
+          <div style={{ background: '#fff', width: '260px', height: '100%', padding: '70px 0 20px', position: 'relative' }} onClick={e => e.stopPropagation()}>
+  <button onClick={() => setOpen(false)} style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#1a1a1a' }}>✕</button>
             <nav style={{ display: 'flex', flexDirection: 'column' }}>
               {menuItems.map(({ label, href }) => (
                 <a key={href} href={href} style={{ padding: '12px 20px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', background: label === active ? '#F5F2EC' : 'transparent', color: label === active ? '#1a1a1a' : '#888', fontWeight: label === active ? 500 : 400, borderLeft: label === active ? '2px solid #1a1a1a' : '2px solid transparent' }}>
