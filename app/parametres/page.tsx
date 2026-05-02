@@ -1,18 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import Logo from '../components/Logo'
-
-const menuItems = [
-  { label: 'Tableau de bord', href: '/' },
-  { label: 'Mes codes', href: '/mes-codes' },
-  { label: 'Affiliés', href: '/affilies' },
-  { label: 'Stats', href: '/stats' },
-  { label: 'Paiements', href: '/paiements' },
-  { label: 'Boutiques', href: '/boutiques' },
-  { label: 'Support', href: '/support' },
-  { label: 'Paramètres', href: '/parametres' },
-]
+import Sidebar from '../components/Sidebar'
 
 export default function Parametres() {
   const [vendeur, setVendeur] = useState<any>(null)
@@ -97,26 +86,9 @@ export default function Parametres() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
-      <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
-        <div className="px-5 pb-6"><Logo size="sm" /></div>
-        <nav className="flex flex-col">
-          {menuItems.map(({ label, href }) => (
-            <a key={href} href={href} className={`px-5 py-2 text-sm flex items-center gap-2 cursor-pointer hover:text-stone-900 ${label === 'Paramètres' ? 'text-stone-900 font-medium bg-stone-100 border-l-2 border-stone-900' : 'text-stone-500'}`}>
-              <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
-              {label}
-            </a>
-          ))}
-        </nav>
-        <div className="mt-auto px-5 pb-4">
-          <div className="text-xs text-stone-400 mb-1">Connecté en tant que</div>
-          <div className="text-xs text-stone-600 font-medium truncate">{vendeur?.email}</div>
-          <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login' }} className="mt-3 text-xs text-stone-400 hover:text-stone-600 cursor-pointer">
-            Se déconnecter
-          </button>
-        </div>
-      </div>
+      <Sidebar active="Paramètres" email={vendeur?.email} />
 
-      <div style={{ flex: 1, padding: '1.5rem', maxWidth: '720px' }}>
+      <div style={{ flex: 1, padding: '1.5rem', maxWidth: '720px', overflowX: 'hidden' }}>
         <div style={{ marginBottom: '1.5rem' }}>
           <h1 style={{ fontSize: '16px', fontWeight: 500, marginBottom: '2px', color: '#1a1a1a' }}>Paramètres</h1>
           <p style={{ fontSize: '12px', color: '#888' }}>Configurez votre compte et votre programme d'affiliation</p>
@@ -175,7 +147,7 @@ export default function Parametres() {
           <div style={{ background: '#E1F5EE', borderRadius: '8px', padding: '10px 14px' }}>
             <div style={{ fontSize: '12px', fontWeight: 500, color: '#085041', marginBottom: '3px' }}>Lien affilié pour les boutiques sans Shopify</div>
             <div style={{ fontSize: '12px', color: '#0F6E56', marginBottom: '8px' }}>Partagez ce lien à vos affiliés s'ils n'ont pas de boutique Shopify. Les clics seront trackés automatiquement.</div>
-            <div style={{ background: '#fff', borderRadius: '6px', padding: '7px 12px', fontSize: '12px', color: '#1D9E75', fontFamily: 'monospace' }}>
+            <div style={{ background: '#fff', borderRadius: '6px', padding: '7px 12px', fontSize: '12px', color: '#1D9E75', fontFamily: 'monospace', wordBreak: 'break-all' }}>
               {lienAffilie}
             </div>
           </div>
@@ -184,7 +156,7 @@ export default function Parametres() {
         {/* Message de bienvenue */}
         <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1rem' }}>
           <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>Message de bienvenue</div>
-          <div style={{ fontSize: '12px', color: '#888', marginBottom: '12px' }}>Ce message est envoyé par email à vos affiliés quand vous créez leur code. Personnalisez-le pour créer une vraie relation !</div>
+          <div style={{ fontSize: '12px', color: '#888', marginBottom: '12px' }}>Ce message est envoyé par email à vos affiliés quand vous créez leur code.</div>
           <div style={{ background: '#F5F2EC', borderRadius: '8px', padding: '1rem', marginBottom: '12px', borderLeft: '3px solid #1D9E75' }}>
             <div style={{ fontSize: '12px', color: '#888', marginBottom: '8px' }}>Aperçu de l'email reçu par l'affilié</div>
             <div style={{ fontSize: '13px', color: '#1a1a1a', lineHeight: 1.7 }}>
@@ -209,10 +181,10 @@ export default function Parametres() {
         {/* Compte */}
         <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1rem' }}>
           <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '1rem', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>Compte</div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
             <div>
               <div style={{ fontSize: '12px', color: '#888', marginBottom: '2px' }}>Plan actuel</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <div style={{ fontSize: '13px', fontWeight: 500 }}>{vendeur?.plan === 'starter' ? 'Starter' : vendeur?.plan === 'business' ? 'Business' : 'Gratuit'}</div>
                 <div style={{ background: vendeur?.plan === 'starter' ? '#E1F5EE' : vendeur?.plan === 'business' ? '#EEEDFE' : '#FAEEDA', color: vendeur?.plan === 'starter' ? '#085041' : vendeur?.plan === 'business' ? '#3C3489' : '#633806', fontSize: '11px', padding: '2px 8px', borderRadius: '4px' }}>
                   {vendeur?.plan === 'starter' ? 'Starter' : vendeur?.plan === 'business' ? 'Business' : 'Free'}
