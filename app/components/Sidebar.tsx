@@ -20,7 +20,7 @@ export default function Sidebar({ active, email }: { active: string, email?: str
   return (
     <>
       {/* Desktop sidebar */}
-      <div className="sidebar-desktop w-52 bg-white border-r border-stone-200 flex-col py-5 hidden md:flex"
+      <div className="sidebar-desktop w-52 bg-white border-r border-stone-200 flex-col py-5 hidden md:flex">
         <div className="px-5 pb-6"><Logo size="sm" /></div>
         <nav className="flex flex-col">
           {menuItems.map(({ label, href }) => (
