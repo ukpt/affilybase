@@ -1,18 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import Logo from '../components/Logo'
-
-const menuItems = [
-  { label: 'Tableau de bord', href: '/' },
-  { label: 'Mes codes', href: '/mes-codes' },
-  { label: 'Affiliés', href: '/affilies' },
-  { label: 'Stats', href: '/stats' },
-  { label: 'Paiements', href: '/paiements' },
-  { label: 'Boutiques', href: '/boutiques' },
-  { label: 'Support', href: '/support' },
-  { label: 'Paramètres', href: '/parametres' },
-]
+import Sidebar from '../components/Sidebar'
 
 const MOYENS = ['Virement bancaire', 'Virement instantané', 'PayPal', 'Lydia / Sumeria', 'Revolut', 'Wise', 'Autre']
 
@@ -30,31 +19,20 @@ export default function Paiements() {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/login'; return }
-
       const { data: v } = await supabase.from('vendeurs').select('*').eq('email', user.email).single()
       if (!v) { setLoading(false); return }
       setVendeur(v)
       setMoyens(v.moyens_paiement || [])
       setFrequence(v.frequence_paiement || 'mensuel')
-
       const { data: codesData } = await supabase.from('codes').select('*, affilies(*)').eq('vendeur_id', v.id)
       const { data: ventesData } = await supabase.from('ventes').select('*').in('code_id', (codesData || []).map((c: any) => c.id))
       const { data: paiementsData } = await supabase.from('paiements').select('*, affilies(nom, email)').eq('vendeur_id', v.id).order('created_at', { ascending: false })
-
       setPaiements(paiementsData || [])
-
       const affiliesAvecDettes = (codesData || []).map((code: any) => {
         const ventesCode = (ventesData || []).filter((vente: any) => vente.code_id === code.id && !vente.payee)
         const montant = ventesCode.reduce((s: number, vente: any) => s + (vente.commission || 0), 0)
-        return {
-          ...code.affilies,
-          code: code.code,
-          ventes: ventesCode.length,
-          montant,
-          coordonnees: code.affilies?.coordonnees_paiement || {},
-        }
+        return { ...code.affilies, code: code.code, ventes: ventesCode.length, montant, coordonnees: code.affilies?.coordonnees_paiement || {} }
       }).filter((a: any) => a.montant > 0)
-
       setAffilies(affiliesAvecDettes)
       setLoading(false)
     }
@@ -77,32 +55,18 @@ export default function Paiements() {
   const marquerPaye = async (affilie: any) => {
     if (!vendeur) return
     const moyen = moyens[0] || 'Non précisé'
-
-    await supabase.from('paiements').insert({
-      vendeur_id: vendeur.id,
-      affilie_id: affilie.id,
-      montant: affilie.montant,
-      moyen,
-    })
-
+    await supabase.from('paiements').insert({ vendeur_id: vendeur.id, affilie_id: affilie.id, montant: affilie.montant, moyen })
     await supabase.from('ventes').update({ payee: true }).eq('code_id', affilie.id).eq('payee', false)
-
-    await supabase.from('notifications_affilies').insert({
-      affilie_id: affilie.id,
-      message: `🎉 Bonne nouvelle ! ${vendeur.nom || vendeur.email} vient de te virer ${affilie.montant.toFixed(2)} € pour tes ${affilie.ventes} ventes. Merci pour ton travail !`,
-    })
-
+    await supabase.from('notifications_affilies').insert({ affilie_id: affilie.id, message: `🎉 Bonne nouvelle ! ${vendeur.nom || vendeur.email} vient de te virer ${affilie.montant.toFixed(2)} € pour tes ${affilie.ventes} ventes. Merci pour ton travail !` })
     setAffilies(prev => prev.filter(a => a.id !== affilie.id))
     const { data: newPaiement } = await supabase.from('paiements').select('*, affilies(nom, email)').eq('vendeur_id', vendeur.id).order('created_at', { ascending: false }).limit(1).single()
     if (newPaiement) setPaiements(prev => [newPaiement, ...prev])
   }
 
   const copier = (texte: string) => navigator.clipboard.writeText(texte)
-
   const totalAVerser = affilies.reduce((s, a) => s + a.montant, 0)
   const totalVerseMois = paiements.filter(p => new Date(p.created_at).getMonth() === new Date().getMonth()).reduce((s, p) => s + (p.montant || 0), 0)
   const totalVerse = paiements.reduce((s, p) => s + (p.montant || 0), 0)
-
   const initiales = (nom: string) => nom?.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) || '??'
 
   if (loading) return (
@@ -113,26 +77,9 @@ export default function Paiements() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
-      <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
-        <div className="px-5 pb-6"><Logo size="sm" /></div>
-        <nav className="flex flex-col">
-          {menuItems.map(({ label, href }) => (
-            <a key={href} href={href} className={`px-5 py-2 text-sm flex items-center gap-2 cursor-pointer hover:text-stone-900 ${label === 'Paiements' ? 'text-stone-900 font-medium bg-stone-100 border-l-2 border-stone-900' : 'text-stone-500'}`}>
-              <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
-              {label}
-            </a>
-          ))}
-        </nav>
-        <div className="mt-auto px-5 pb-4">
-          <div className="text-xs text-stone-400 mb-1">Connecté en tant que</div>
-          <div className="text-xs text-stone-600 font-medium truncate">{vendeur?.email}</div>
-          <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login' }} className="mt-3 text-xs text-stone-400 hover:text-stone-600 cursor-pointer">
-            Se déconnecter
-          </button>
-        </div>
-      </div>
+      <Sidebar active="Paiements" email={vendeur?.email} />
 
-      <div style={{ flex: 1, padding: '1.5rem', maxWidth: '800px' }}>
+      <div style={{ flex: 1, padding: '1.5rem', maxWidth: '800px', overflowX: 'hidden' }}>
         <div style={{ marginBottom: '1.5rem' }}>
           <h1 style={{ fontSize: '16px', fontWeight: 500, marginBottom: '2px' }}>Paiements</h1>
           <p style={{ fontSize: '12px', color: '#888' }}>Suivez et gérez les commissions de vos affiliés</p>
@@ -184,7 +131,6 @@ export default function Paiements() {
             <span>En attente de paiement</span>
             <span style={{ background: '#FAEEDA', color: '#633806', fontSize: '11px', padding: '2px 8px', borderRadius: '4px' }}>{affilies.length}</span>
           </div>
-
           {affilies.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '2rem', color: '#888', fontSize: '13px' }}>
               Aucun paiement en attente — tous vos affiliés sont à jour ✓
@@ -213,7 +159,7 @@ export default function Paiements() {
                 {Object.keys(a.coordonnees).length > 0 ? (
                   <div style={{ paddingTop: '10px', borderTop: '0.5px solid #FAEEDA', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '11px', color: '#633806', background: '#FAEEDA', padding: '2px 8px', borderRadius: '4px', fontWeight: 500 }}>{Object.keys(a.coordonnees)[0]}</span>
-                    <span style={{ fontSize: '12px', color: '#555', fontFamily: Object.keys(a.coordonnees)[0] === 'Virement bancaire' ? 'monospace' : 'inherit' }}>{Object.values(a.coordonnees)[0] as string}</span>
+                    <span style={{ fontSize: '12px', color: '#555' }}>{Object.values(a.coordonnees)[0] as string}</span>
                     <button onClick={() => copier(Object.values(a.coordonnees)[0] as string)} style={{ fontSize: '11px', color: '#1D9E75', background: 'none', border: 'none', cursor: 'pointer', marginLeft: 'auto' }}>Copier</button>
                   </div>
                 ) : (
@@ -236,7 +182,7 @@ export default function Paiements() {
             <div style={{ textAlign: 'center', padding: '2rem', color: '#888', fontSize: '13px' }}>Aucun paiement effectué pour l'instant</div>
           ) : (
             paiements.map((p, i) => (
-              <div key={i} style={{ borderRadius: '8px', padding: '0.875rem', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#F5F2EC' }}>
+              <div key={i} style={{ borderRadius: '8px', padding: '0.875rem', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#F5F2EC', flexWrap: 'wrap', gap: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#E1F5EE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 500, color: '#085041', flexShrink: 0 }}>{initiales(p.affilies?.nom)}</div>
                   <div>
