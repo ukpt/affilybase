@@ -2,8 +2,35 @@ export default function Landing() {
   return (
     <main style={{ fontFamily: 'Georgia, serif', maxWidth: '100%', margin: '0', background: '#F5F2EC', color: '#1a1a1a', minHeight: '100vh' }}>
 
+      <style>{`
+        .landing-pad { padding: 2rem 4rem; }
+        .landing-nav { padding: 1rem 4rem; }
+        .landing-hr { margin: 0 4rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-2-small { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .dashboard-wrap { margin: 0 4rem 1.5rem; display: flex; }
+        .hero-pad { padding: 3rem 4rem 0; text-align: center; }
+        .dashboard-hr { border: none; border-top: 0.5px solid #ddd8ce; margin: 0 4rem 1.5rem; }
+
+        @media (max-width: 768px) {
+          .landing-pad { padding: 1.5rem 1.2rem; }
+          .landing-nav { padding: 1rem 1.2rem; }
+          .landing-hr { margin: 0 1.2rem; }
+          .grid-4 { grid-template-columns: 1fr 1fr; gap: 8px; }
+          .grid-3 { grid-template-columns: 1fr; gap: 10px; }
+          .grid-2 { grid-template-columns: 1fr; gap: 12px; }
+          .grid-2-small { grid-template-columns: 1fr 1fr; gap: 6px; }
+          .dashboard-wrap { margin: 0 1.2rem 1.5rem; flex-direction: column; }
+          .hero-pad { padding: 2rem 1.2rem 0; }
+          .dashboard-hr { margin: 0 1.2rem 1.5rem; }
+          .hide-mobile { display: none; }
+        }
+      `}</style>
+
       {/* NAV */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 4rem', borderBottom: '0.5px solid #ddd8ce' }}>
+      <nav className="landing-nav" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '0.5px solid #ddd8ce' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1 }}>
           <span style={{ fontSize: '22px', fontWeight: 700, letterSpacing: '0.04em' }}>Affily</span>
           <div style={{ width: '100%', height: '1px', background: '#1a1a1a', margin: '3px 0' }} />
@@ -16,7 +43,7 @@ export default function Landing() {
       </nav>
 
       {/* HERO */}
-      <div style={{ padding: '3rem 4rem 0', textAlign: 'center' }}>
+      <div className="hero-pad">
         <span style={{ display: 'inline-block', background: '#e0ede7', color: '#1a6645', fontSize: '12px', padding: '4px 14px', borderRadius: '20px', marginBottom: '1.2rem' }}>Compatible Shopify</span>
         <h1 style={{ fontSize: '30px', fontWeight: 400, lineHeight: 1.4, marginBottom: '1rem' }}>
           Boostez vos ventes Shopify<br />avec vos <span style={{ background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px' }}>Partenaires</span>
@@ -31,16 +58,16 @@ export default function Landing() {
       </div>
 
       {/* DASHBOARD VISUEL */}
-      <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce', margin: '0 4rem 1.5rem' }} />
-      <div style={{ textAlign: 'center', padding: '0 4rem 1.5rem' }}>
+      <hr className="dashboard-hr" />
+      <div className="landing-pad" style={{ textAlign: 'center', paddingBottom: '1.5rem' }}>
         <span style={{ display: 'inline-block', background: '#e8f5ee', color: '#0F6E56', fontSize: '12px', fontWeight: 500, padding: '4px 12px', borderRadius: '20px', marginBottom: '0.75rem', letterSpacing: '0.05em' }}>100% EN FRANÇAIS</span>
         <h2 style={{ fontSize: '22px', fontWeight: 400, marginBottom: '0.5rem' }}>Une interface simple qui booste vos ventes et votre visibilité</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7 }}>Gérez vos affiliés, suivez vos commissions et analysez vos performances — le tout en quelques clics.</p>
       </div>
 
       {/* Dashboard vendeur */}
-      <div style={{ margin: '0 4rem 1.5rem', border: '0.5px solid #ddd8ce', borderRadius: '10px', overflow: 'hidden', display: 'flex', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
-        <div style={{ width: '130px', background: '#fff', borderRight: '0.5px solid #ddd8ce', padding: '1rem 0', flexShrink: 0 }}>
+      <div className="dashboard-wrap" style={{ border: '0.5px solid #ddd8ce', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+        <div className="hide-mobile" style={{ width: '130px', background: '#fff', borderRight: '0.5px solid #ddd8ce', padding: '1rem 0', flexShrink: 0 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.2rem', padding: '0 1rem' }}>
             <span style={{ fontSize: '14px', fontWeight: 700 }}>Affily</span>
             <div style={{ width: '100%', height: '1px', background: '#1a1a1a', margin: '2px 0' }} />
@@ -61,9 +88,7 @@ export default function Landing() {
             </div>
             <span style={{ background: '#1a1a1a', color: '#fff', borderRadius: '4px', padding: '4px 10px', fontSize: '9px' }}>+ Nouveau code</span>
           </div>
-
-          {/* Stats cards améliorées */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '8px', marginBottom: '0.75rem' }}>
+          <div className="grid-3" style={{ marginBottom: '0.75rem' }}>
             {[
               { label: 'Codes créés', val: '20', sub: '20 actifs', green: false },
               { label: 'Affiliés', val: '20', sub: 'dans votre programme', green: false },
@@ -76,11 +101,8 @@ export default function Landing() {
               </div>
             ))}
           </div>
-
           <div style={{ fontSize: '10px', fontWeight: 500, marginBottom: '0.5rem' }}>Vos codes d'affiliation</div>
-
-          {/* Code cards améliorées */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+          <div className="grid-2-small">
             {[['STYLE2024', '10%', '20%'], ['PROMO15', '10%', '15%'], ['PARTNER30', '15%', '10%'], ['SUMMER10', '10%', '10%']].map(([code, comm, remise], i) => (
               <div key={i} style={{ background: '#fff', borderRadius: '8px', padding: '8px 12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
@@ -89,11 +111,11 @@ export default function Landing() {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderTop: '0.5px solid #f0f0f0' }}>
                   <span style={{ fontSize: '10px', color: '#888' }}>Commission</span>
-                  <span style={{ fontSize: '10px', fontWeight: 500, color: '#1a1a1a' }}>{comm}</span>
+                  <span style={{ fontSize: '10px', fontWeight: 500 }}>{comm}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
                   <span style={{ fontSize: '10px', color: '#888' }}>Remise</span>
-                  <span style={{ fontSize: '10px', fontWeight: 500, color: '#1a1a1a' }}>{remise}</span>
+                  <span style={{ fontSize: '10px', fontWeight: 500 }}>{remise}</span>
                 </div>
               </div>
             ))}
@@ -102,94 +124,80 @@ export default function Landing() {
       </div>
 
       {/* 2 écrans alignés */}
-      <div style={{ margin: '0 4rem 2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
-        {/* Espace affilié */}
-        <div style={{ background: '#fff', borderRadius: '12px', border: '0.5px solid #ddd8ce', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
-          <div style={{ background: '#f8f7f4', padding: '8px 14px', borderBottom: '0.5px solid #eee' }}>
-            <span style={{ fontSize: '11px', color: '#888', fontWeight: 500 }}>Espace Affilié</span>
-          </div>
-          <div style={{ padding: '14px' }}>
-            <div style={{ textAlign: 'center', marginBottom: '12px' }}>
-              <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px' }}>Votre code affilié</div>
-              <div style={{ background: '#f0faf5', borderRadius: '8px', padding: '10px', display: 'inline-block' }}>
-                <div style={{ fontFamily: 'monospace', fontSize: '20px', fontWeight: 500, color: '#1a1a1a', letterSpacing: '3px' }}>STYLE2024</div>
-              </div>
+      <div className="landing-pad" style={{ paddingTop: 0 }}>
+        <div className="grid-2">
+          {/* Espace affilié */}
+          <div style={{ background: '#fff', borderRadius: '12px', border: '0.5px solid #ddd8ce', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
+            <div style={{ background: '#f8f7f4', padding: '8px 14px', borderBottom: '0.5px solid #eee' }}>
+              <span style={{ fontSize: '11px', color: '#888', fontWeight: 500 }}>Espace Affilié</span>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '12px' }}>
-              {[['320€', 'Commissions', '#2D9B6F'], ['47', 'Ventes', '#1a1a1a'], ['10%', 'Commission', '#1a1a1a']].map(([val, label, color], i) => (
-                <div key={i} style={{ background: '#f8f7f4', borderRadius: '6px', padding: '7px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '14px', fontWeight: 500, color }}>{val}</div>
-                  <div style={{ fontSize: '9px', color: '#888' }}>{label}</div>
+            <div style={{ padding: '14px' }}>
+              <div style={{ textAlign: 'center', marginBottom: '12px' }}>
+                <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px' }}>Votre code affilié</div>
+                <div style={{ background: '#f0faf5', borderRadius: '8px', padding: '10px', display: 'inline-block' }}>
+                  <div style={{ fontFamily: 'monospace', fontSize: '20px', fontWeight: 500, color: '#1a1a1a', letterSpacing: '3px' }}>STYLE2024</div>
                 </div>
-              ))}
-            </div>
-            <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px' }}>Partager sur</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '12px' }}>
-              {[['Instagram', '#1a1a1a'], ['WhatsApp', '#25D366'], ['Facebook', '#1877F2'], ['TikTok', '#010101']].map(([label, bg], i) => (
-                <div key={i} style={{ background: bg, color: 'white', borderRadius: '6px', padding: '6px', textAlign: 'center', fontSize: '10px' }}>{label}</div>
-              ))}
-            </div>
-            <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px' }}>Ventes réalisées</div>
-            <div style={{ background: 'white', border: '0.5px solid #eee', borderRadius: '8px', overflow: 'hidden' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '6px 10px', background: '#f8f7f4', borderBottom: '0.5px solid #eee' }}>
-                {['Date', 'Commande', 'Commission'].map((h, i) => (
-                  <span key={i} style={{ fontSize: '9px', color: '#888', textAlign: i === 2 ? 'right' : 'left' }}>{h}</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '12px' }}>
+                {[['320€', 'Commissions', '#2D9B6F'], ['47', 'Ventes', '#1a1a1a'], ['10%', 'Commission', '#1a1a1a']].map(([val, label, color], i) => (
+                  <div key={i} style={{ background: '#f8f7f4', borderRadius: '6px', padding: '7px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 500, color }}>{val}</div>
+                    <div style={{ fontSize: '9px', color: '#888' }}>{label}</div>
+                  </div>
                 ))}
               </div>
-              {[['12 avr.', '#1042', '+8,50€'], ['10 avr.', '#1038', '+12,00€'], ['08 avr.', '#1031', '+6,20€']].map(([date, cmd, comm], i) => (
-                <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '6px 10px', borderBottom: i < 2 ? '0.5px solid #f5f5f5' : 'none' }}>
-                  <span style={{ fontSize: '10px', color: '#888' }}>{date}</span>
-                  <span style={{ fontSize: '10px', color: '#1a1a1a' }}>{cmd}</span>
-                  <span style={{ fontSize: '10px', color: '#2D9B6F', textAlign: 'right' }}>{comm}</span>
+              <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px' }}>Partager sur</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '12px' }}>
+                {[['Instagram', '#1a1a1a'], ['WhatsApp', '#25D366'], ['Facebook', '#1877F2'], ['TikTok', '#010101']].map(([label, bg], i) => (
+                  <div key={i} style={{ background: bg, color: 'white', borderRadius: '6px', padding: '6px', textAlign: 'center', fontSize: '10px' }}>{label}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Stats avancées */}
+          <div style={{ background: '#fff', borderRadius: '12px', border: '0.5px solid #ddd8ce', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
+            <div style={{ background: '#f8f7f4', padding: '8px 14px', borderBottom: '0.5px solid #eee' }}>
+              <span style={{ fontSize: '11px', color: '#888', fontWeight: 500 }}>Stats Avancées</span>
+            </div>
+            <div style={{ padding: '14px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                <div style={{ background: '#f8f7f4', borderRadius: '6px', padding: '10px' }}>
+                  <div style={{ fontSize: '9px', color: '#888', marginBottom: '2px' }}>Ventes totales</div>
+                  <div style={{ fontSize: '20px', fontWeight: 500, color: '#2D9B6F' }}>1 240€</div>
+                  <div style={{ fontSize: '9px', color: '#2D9B6F' }}>+24% ce mois</div>
+                </div>
+                <div style={{ background: '#f8f7f4', borderRadius: '6px', padding: '10px' }}>
+                  <div style={{ fontSize: '9px', color: '#888', marginBottom: '2px' }}>Commissions versées</div>
+                  <div style={{ fontSize: '20px', fontWeight: 500, color: '#1a1a1a' }}>124€</div>
+                  <div style={{ fontSize: '9px', color: '#aaa' }}>10% moy.</div>
+                </div>
+              </div>
+              <div style={{ fontSize: '11px', color: '#888', marginBottom: '8px' }}>Évolution des ventes</div>
+              <div style={{ height: '70px', display: 'flex', alignItems: 'flex-end', gap: '5px', marginBottom: '12px' }}>
+                {[35, 50, 40, 65, 55, 90].map((h, i) => (
+                  <div key={i} style={{ flex: 1, background: i === 5 ? '#2D9B6F' : '#e0f0ea', borderRadius: '3px 3px 0 0', height: `${h}%` }} />
+                ))}
+              </div>
+              <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px' }}>Top affiliés</div>
+              {[['STYLE2024', '480€'], ['PARTNER30', '320€'], ['SUMMER10', '210€']].map(([code, val], i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', padding: '5px 0', borderBottom: i < 2 ? '0.5px solid #f0f0f0' : 'none' }}>
+                  <span style={{ color: '#1a1a1a' }}>{code}</span>
+                  <span style={{ color: '#2D9B6F', fontWeight: 500 }}>{val}</span>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-
-        {/* Stats avancées */}
-        <div style={{ background: '#fff', borderRadius: '12px', border: '0.5px solid #ddd8ce', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
-          <div style={{ background: '#f8f7f4', padding: '8px 14px', borderBottom: '0.5px solid #eee' }}>
-            <span style={{ fontSize: '11px', color: '#888', fontWeight: 500 }}>Stats Avancées</span>
-          </div>
-          <div style={{ padding: '14px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
-              <div style={{ background: '#f8f7f4', borderRadius: '6px', padding: '10px' }}>
-                <div style={{ fontSize: '9px', color: '#888', marginBottom: '2px' }}>Ventes totales</div>
-                <div style={{ fontSize: '20px', fontWeight: 500, color: '#2D9B6F' }}>1 240€</div>
-                <div style={{ fontSize: '9px', color: '#2D9B6F' }}>+24% ce mois</div>
-              </div>
-              <div style={{ background: '#f8f7f4', borderRadius: '6px', padding: '10px' }}>
-                <div style={{ fontSize: '9px', color: '#888', marginBottom: '2px' }}>Commissions versées</div>
-                <div style={{ fontSize: '20px', fontWeight: 500, color: '#1a1a1a' }}>124€</div>
-                <div style={{ fontSize: '9px', color: '#aaa' }}>10% moy.</div>
-              </div>
-            </div>
-            <div style={{ fontSize: '11px', color: '#888', marginBottom: '8px' }}>Évolution des ventes</div>
-            <div style={{ height: '70px', display: 'flex', alignItems: 'flex-end', gap: '5px', marginBottom: '12px' }}>
-              {[35, 50, 40, 65, 55, 90].map((h, i) => (
-                <div key={i} style={{ flex: 1, background: i === 5 ? '#2D9B6F' : '#e0f0ea', borderRadius: '3px 3px 0 0', height: `${h}%` }} />
-              ))}
-            </div>
-            <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px' }}>Top affiliés</div>
-            {[['STYLE2024', '480€'], ['PARTNER30', '320€'], ['SUMMER10', '210€']].map(([code, val], i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', padding: '5px 0', borderBottom: i < 2 ? '0.5px solid #f0f0f0' : 'none' }}>
-                <span style={{ color: '#1a1a1a' }}>{code}</span>
-                <span style={{ color: '#2D9B6F', fontWeight: 500 }}>{val}</span>
-              </div>
-            ))}
           </div>
         </div>
       </div>
 
       {/* 3 FAÇONS */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 4rem' }}>
+      <div className="landing-pad">
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>3 façons de l'utiliser</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Un outil, trois stratégies gagnantes</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Affilybase s'adapte à votre façon de vendre.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px' }}>
+        <div className="grid-3">
           {[
             { title: 'Créateurs de contenu', desc: "Donnez un code personnalisé à vos créateurs. Ils partagent, leur audience achète.", bg: '#e0ede7' },
             { title: 'Boutiques partenaires', desc: 'Collaborez avec des boutiques complémentaires. Recommandez-vous mutuellement.', bg: '#e8e4f0' },
@@ -207,7 +215,7 @@ export default function Landing() {
 
       {/* COMMENT CA MARCHE */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 4rem' }}>
+      <div className="landing-pad">
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>Comment ça marche</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>En place en 5 minutes</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Pas besoin de développeur. Tout se configure depuis votre dashboard.</p>
@@ -228,11 +236,11 @@ export default function Landing() {
 
       {/* TARIFS */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 4rem' }}>
+      <div className="landing-pad">
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>Tarifs</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Simple et transparent</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Commencez gratuitement, évoluez selon vos besoins.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px' }}>
+        <div className="grid-4">
           {[
             { name: 'Free', price: '0€', period: "1 mois d'essai", features: ['1 code actif', '1 partenaire', 'Dashboard brandé', 'Lien court perso'], excluded: ['Stats avancées', 'Multi-boutiques', 'Support prioritaire'], popular: false },
             { name: 'Starter', price: '4.99€', period: 'par mois', features: ['20 codes actifs', '20 partenaires', 'Dashboard brandé', 'Lien court perso', 'Stats avancées'], excluded: ['Multi-boutiques', 'Support prioritaire'], popular: true },
@@ -244,7 +252,7 @@ export default function Landing() {
               <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px' }}>{name}</div>
               <div style={{ fontSize: '20px', fontWeight: 500, marginBottom: '2px' }}>{price}</div>
               <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px' }}>{period}</div>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '5px', padding: 0, margin: 0 }}>
                 {features.map((f, j) => <li key={j} style={{ fontSize: '11px', color: '#555', display: 'flex', gap: '5px' }}><span style={{ color: '#2D9B6F' }}>✓</span>{f}</li>)}
                 {excluded.map((f, j) => <li key={j} style={{ fontSize: '11px', color: '#bbb', display: 'flex', gap: '5px' }}><span>✗</span>{f}</li>)}
               </ul>
@@ -255,11 +263,11 @@ export default function Landing() {
 
       {/* CHIFFRES */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 4rem' }}>
+      <div className="landing-pad">
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>Affilybase en chiffres</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Déjà adopté par des boutiques Shopify</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Des premiers résultats encourageants.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px' }}>
+        <div className="grid-3">
           {[['+ 150', 'Boutiques actives'], ['2 500+', 'Ventes générées'], ['4.9/5', 'Note moyenne']].map(([val, label], i) => (
             <div key={i} style={{ textAlign: 'center', padding: '1.25rem', background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px' }}>
               <div style={{ fontSize: '20px', fontWeight: 700, marginBottom: '4px' }}>{val}</div>
@@ -271,11 +279,11 @@ export default function Landing() {
 
       {/* AVIS */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 4rem' }}>
+      <div className="landing-pad">
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>Avis clients</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Ils utilisent Affilybase</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Des boutiques Shopify qui ont boosté leurs ventes grâce à leurs partenaires.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px' }}>
+        <div className="grid-3">
           {[
             { text: "En moins d'une semaine j'avais 5 créatrices qui partageaient mes produits. Les ventes ont suivi immédiatement.", name: 'Sophie L.', shop: 'Boutique mode — Paris', avatarBg: '#1a1a1a', avatarColor: '#fff', initials: 'L' },
             { text: "Affilybase m'a permis de lancer mon programme en 10 minutes. Mes clients fidèles sont devenus mes meilleurs vendeurs.", name: 'Marc R.', shop: 'Accessoires sport — Lyon', avatarBg: '#E8F5F0', avatarColor: '#2D9B6F', initials: 'A' },
@@ -298,7 +306,7 @@ export default function Landing() {
 
       {/* FAQ */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
-      <div style={{ padding: '2rem 4rem' }}>
+      <div className="landing-pad">
         <span style={{ display: 'inline-block', background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, marginBottom: '1rem' }}>FAQ</span>
         <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Questions fréquentes</h2>
         <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Tout ce que vous voulez savoir avant de commencer.</p>
@@ -318,14 +326,14 @@ export default function Landing() {
       </div>
 
       {/* CTA */}
-      <div style={{ padding: '2.5rem 4rem', textAlign: 'center', borderTop: '0.5px solid #ddd8ce' }}>
+      <div className="landing-pad" style={{ textAlign: 'center', borderTop: '0.5px solid #ddd8ce' }}>
         <h2 style={{ fontSize: '24px', fontWeight: 400, marginBottom: '0.75rem' }}>Prêt à <span style={{ background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px' }}>booster vos ventes</span> ?</h2>
         <p style={{ fontSize: '13px', color: '#666', marginBottom: '1.5rem' }}>Rejoignez les boutiques Shopify qui utilisent Affilybase pour vendre plus.</p>
         <a href="/login" style={{ background: '#2D9B6F', color: '#fff', borderRadius: '6px', padding: '0.85rem 1.75rem', fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}>Commencer gratuitement — sans engagement</a>
       </div>
 
       {/* FOOTER */}
-      <div style={{ background: '#1a1a1a', padding: '1.25rem 4rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+      <div className="landing-pad" style={{ background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1 }}>
           <span style={{ fontSize: '18px', fontWeight: 700, color: '#fff', letterSpacing: '0.04em' }}>Affily</span>
           <div style={{ width: '100%', height: '1px', background: '#fff', margin: '3px 0' }} />
