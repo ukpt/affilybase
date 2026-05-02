@@ -17,6 +17,12 @@ export const metadata: Metadata = {
   description: "Boostez vos ventes Shopify avec un programme d'affiliation simple et puissant.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,9 +33,6 @@ export default function RootLayout({
       lang="fr"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
