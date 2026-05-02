@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import Logo from '../components/Logo'
+import Sidebar from '../components/Sidebar'
 
 export default function Boutiques() {
   const [vendeur, setVendeur] = useState<any>(null)
@@ -15,25 +15,12 @@ export default function Boutiques() {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/login'; return }
-
-      const { data: v } = await supabase
-        .from('vendeurs')
-        .select('*')
-        .eq('email', user.email)
-        .single()
-
+      const { data: v } = await supabase.from('vendeurs').select('*').eq('email', user.email).single()
       setVendeur(v)
-
       if (v) {
-        const { data: b } = await supabase
-          .from('boutiques')
-          .select('*')
-          .eq('vendeur_id', v.id)
-          .order('created_at', { ascending: false })
-
+        const { data: b } = await supabase.from('boutiques').select('*').eq('vendeur_id', v.id).order('created_at', { ascending: false })
         setBoutiques(b || [])
       }
-
       setLoading(false)
     }
     init()
@@ -41,19 +28,8 @@ export default function Boutiques() {
 
   const ajouterBoutique = async () => {
     if (!nom || !url || !vendeur) return
-
-    const { data } = await supabase
-      .from('boutiques')
-      .insert({ vendeur_id: vendeur.id, nom, shopify_url: url })
-      .select()
-      .single()
-
-    if (data) {
-      setBoutiques(prev => [data, ...prev])
-      setNom('')
-      setUrl('')
-      setAjout(false)
-    }
+    const { data } = await supabase.from('boutiques').insert({ vendeur_id: vendeur.id, nom, shopify_url: url }).select().single()
+    if (data) { setBoutiques(prev => [data, ...prev]); setNom(''); setUrl(''); setAjout(false) }
   }
 
   const supprimerBoutique = async (id: string) => {
@@ -70,44 +46,14 @@ export default function Boutiques() {
   const isPlanBusiness = vendeur?.plan === 'business'
 
   return (
-    <div className="flex min-h-screen" style={{ background: '#F5F0E8' }}>
-      {/* Sidebar */}
-      <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
-        <div className="px-5 pb-6">
-          <Logo size="sm" />
-        </div>
-        <nav className="flex flex-col">
-          {[
-            { label: 'Tableau de bord', href: '/' },
-            { label: 'Mes codes', href: '/mes-codes' },
-            { label: 'Affiliés', href: '/affilies' },
-            { label: 'Stats', href: '/stats' },
-            { label: 'Paiements', href: '/paiements' },
-            { label: 'Boutiques', href: '/boutiques' },
-            { label: 'Support', href: '/support' },
-            { label: 'Paramètres', href: '/parametres' },
-          ].map(({ label, href }) => (
-            <a key={href} href={href} className={`px-5 py-2 text-sm flex items-center gap-2 cursor-pointer hover:text-stone-900 ${label === 'Boutiques' ? 'text-stone-900 font-medium bg-stone-100 border-l-2 border-stone-900' : 'text-stone-500'}`}>
-              <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
-              {label}
-            </a>
-          ))}
-        </nav>
-        <div className="mt-auto px-5 pb-4">
-          <div className="text-xs text-stone-400 mb-1">Connecté en tant que</div>
-          <div className="text-xs text-stone-600 font-medium truncate">{vendeur?.email}</div>
-          <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login' }} className="mt-3 text-xs text-stone-400 hover:text-stone-600 cursor-pointer">
-            Se déconnecter
-          </button>
-        </div>
-      </div>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
+      <Sidebar active="Boutiques" email={vendeur?.email} />
 
-      {/* Main */}
-      <div className="flex-1 p-6">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+      <div style={{ flex: 1, padding: '1.5rem', overflowX: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '10px' }}>
           <div>
-            <h1 className="text-base font-medium text-stone-900">Mes boutiques</h1>
-            <p className="text-xs text-stone-500 mt-0.5">Gérez vos boutiques Shopify</p>
+            <h1 style={{ fontSize: '16px', fontWeight: 500, color: '#1a1a1a' }}>Mes boutiques</h1>
+            <p style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>Gérez vos boutiques Shopify</p>
           </div>
           {isPlanBusiness && (
             <button onClick={() => setAjout(!ajout)} style={{ background: '#1a1a1a', color: '#fff', border: 'none', borderRadius: '6px', padding: '0.55rem 1rem', fontSize: '13px', cursor: 'pointer' }}>
@@ -125,7 +71,7 @@ export default function Boutiques() {
               Gérez toutes vos boutiques Shopify depuis un seul compte.
             </p>
             <a href="/abonnement" style={{ background: '#2D9B6F', color: '#fff', borderRadius: '6px', padding: '0.75rem 1.5rem', fontSize: '14px', fontWeight: 500, textDecoration: 'none', display: 'inline-block' }}>
-              Passer au plan Business — 10€/mois
+              Passer au plan Business — 39.99€/mois
             </a>
           </div>
         )}
@@ -135,11 +81,11 @@ export default function Boutiques() {
             <h2 style={{ fontSize: '15px', fontWeight: 500, marginBottom: '1rem' }}>Nouvelle boutique</h2>
             <div style={{ marginBottom: '1rem' }}>
               <label style={{ fontSize: '13px', color: '#555', display: 'block', marginBottom: '6px' }}>Nom de la boutique</label>
-              <input value={nom} onChange={e => setNom(e.target.value)} placeholder="Ma boutique" style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', background: '#F5F2EC', outline: 'none' }} />
+              <input value={nom} onChange={e => setNom(e.target.value)} placeholder="Ma boutique" style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
             </div>
             <div style={{ marginBottom: '1.25rem' }}>
               <label style={{ fontSize: '13px', color: '#555', display: 'block', marginBottom: '6px' }}>URL Shopify</label>
-              <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://ma-boutique.myshopify.com" style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', background: '#F5F2EC', outline: 'none' }} />
+              <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://ma-boutique.myshopify.com" style={{ width: '100%', padding: '0.75rem', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '14px', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={ajouterBoutique} disabled={!nom || !url} style={{ background: nom && url ? '#2D9B6F' : '#ccc', color: '#fff', border: 'none', borderRadius: '6px', padding: '0.75rem 1.5rem', fontSize: '14px', cursor: nom && url ? 'pointer' : 'not-allowed' }}>
@@ -160,7 +106,7 @@ export default function Boutiques() {
               </div>
             ) : (
               boutiques.map((b, i) => (
-                <div key={i} style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div key={i} style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
                   <div>
                     <div style={{ fontSize: '14px', fontWeight: 500, marginBottom: '4px' }}>{b.nom}</div>
                     <div style={{ fontSize: '12px', color: '#2D9B6F' }}>{b.shopify_url}</div>
