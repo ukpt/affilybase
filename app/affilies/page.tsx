@@ -1,29 +1,20 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import Logo from '../components/Logo'
-
-const menuItems = [
-  { label: 'Tableau de bord', href: '/' },
-  { label: 'Mes codes', href: '/mes-codes' },
-  { label: 'Affiliés', href: '/affilies' },
-  { label: 'Stats', href: '/stats' },
-  { label: 'Paiements', href: '/paiements' },
-  { label: 'Boutiques', href: '/boutiques' },
-  { label: 'Support', href: '/support' },
-  { label: 'Paramètres', href: '/parametres' },
-]
+import Sidebar from '../components/Sidebar'
 
 export default function Affilies() {
   const [affilies, setAffilies] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [confirmer, setConfirmer] = useState<string | null>(null)
   const [supprimant, setSupprimant] = useState<string | null>(null)
+  const [email, setEmail] = useState('')
 
   useEffect(() => {
     const fetchAffilies = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { window.location.href = '/login'; return }
+      setEmail(session.user.email || '')
       const { data: vendeur } = await supabase.from('vendeurs').select('id').eq('email', session.user.email).single()
       if (!vendeur) { setLoading(false); return }
       const { data } = await supabase.from('affilies').select('*, codes(code, actif)').eq('vendeur_id', vendeur.id)
@@ -35,12 +26,10 @@ export default function Affilies() {
 
   const supprimerAffilie = async (affilie: any) => {
     setSupprimant(affilie.id)
-    // Supprimer les ventes liées aux codes de l'affilié
     for (const code of affilie.codes || []) {
       await supabase.from('ventes').delete().eq('code_id', code.id)
       await supabase.from('codes').delete().eq('id', code.id)
     }
-    // Supprimer l'affilié
     await supabase.from('affilies').delete().eq('id', affilie.id)
     setAffilies(prev => prev.filter(a => a.id !== affilie.id))
     setSupprimant(null)
@@ -49,26 +38,10 @@ export default function Affilies() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
-      {/* Sidebar */}
-      <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
-        <div className="px-5 pb-6"><Logo size="sm" /></div>
-        <nav className="flex flex-col">
-          <div className="px-5 py-2 text-sm font-medium text-stone-900 bg-stone-100 border-l-2 border-stone-900 flex items-center gap-2 cursor-pointer">
-            <span className="w-1.5 h-1.5 rounded-full bg-stone-900 inline-block"></span>
-            Affiliés
-          </div>
-          {menuItems.filter(i => i.label !== 'Affiliés').map(({ label, href }) => (
-            <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
-              <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
-              {label}
-            </a>
-          ))}
-        </nav>
-      </div>
+      <Sidebar active="Affiliés" email={email} />
 
-      {/* Main */}
-      <div style={{ flex: 1, padding: '2rem' }}>
-        <h1 style={{ fontSize: '20px', fontWeight: 500, marginBottom: '1.5rem' }}>Mes affiliés</h1>
+      <div style={{ flex: 1, padding: '1.5rem', overflowX: 'hidden' }}>
+        <h1 style={{ fontSize: '16px', fontWeight: 500, marginBottom: '1.5rem' }}>Mes affiliés</h1>
 
         {loading && <p style={{ color: '#888', fontSize: '14px' }}>Chargement...</p>}
 
@@ -83,17 +56,14 @@ export default function Affilies() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {affilies.map((a) => (
               <div key={a.id} style={{ background: '#fff', border: `0.5px solid ${confirmer === a.id ? '#f0997b' : '#ddd8ce'}`, borderRadius: '10px', padding: '1rem 1.25rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                   <div>
                     <div style={{ fontSize: '14px', fontWeight: 500 }}>{a.nom}</div>
                     <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>{a.email}</div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{ fontSize: '12px', color: '#2D9B6F' }}>{a.codes?.length || 0} code(s)</div>
-                    <button
-                      onClick={() => setConfirmer(confirmer === a.id ? null : a.id)}
-                      style={{ fontSize: '12px', color: '#888', background: 'none', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer' }}
-                    >
+                    <button onClick={() => setConfirmer(confirmer === a.id ? null : a.id)} style={{ fontSize: '12px', color: '#888', background: 'none', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer' }}>
                       Supprimer
                     </button>
                   </div>
@@ -105,17 +75,10 @@ export default function Affilies() {
                       Supprimer <strong>{a.nom}</strong> et tous ses codes ? Action irréversible.
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <button
-                        onClick={() => setConfirmer(null)}
-                        style={{ fontSize: '12px', color: '#888', background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer' }}
-                      >
+                      <button onClick={() => setConfirmer(null)} style={{ fontSize: '12px', color: '#888', background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer' }}>
                         Annuler
                       </button>
-                      <button
-                        onClick={() => supprimerAffilie(a)}
-                        disabled={supprimant === a.id}
-                        style={{ fontSize: '12px', color: '#fff', background: '#993C1D', border: 'none', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer' }}
-                      >
+                      <button onClick={() => supprimerAffilie(a)} disabled={supprimant === a.id} style={{ fontSize: '12px', color: '#fff', background: '#993C1D', border: 'none', borderRadius: '6px', padding: '5px 12px', cursor: 'pointer' }}>
                         {supprimant === a.id ? 'Suppression...' : 'Confirmer'}
                       </button>
                     </div>
