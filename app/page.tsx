@@ -1,8 +1,7 @@
 ﻿'use client'
-import Logo from './components/Logo'
+import Sidebar from './components/Sidebar'
 import StatsVendeur from './components/StatsVendeur'
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { supabase } from './lib/supabase'
 
 type Code = {
@@ -21,102 +20,65 @@ type Vendeur = {
 }
 
 export default function Dashboard() {
-  const router = useRouter()
   const [codes, setCodes] = useState<Code[]>([])
   const [vendeur, setVendeur] = useState<Vendeur | null>(null)
   const [loading, setLoading] = useState(true)
   const [userEmail, setUserEmail] = useState('')
 
   useEffect(() => {
-  const init = async () => {
-    // Détecter si c'est un lien de reset password
-    const hash = window.location.hash
-    if (hash && hash.includes('type=recovery')) {
-      window.location.href = '/reset-password' + hash
-      return
+    const init = async () => {
+      const hash = window.location.hash
+      if (hash && hash.includes('type=recovery')) {
+        window.location.href = '/reset-password' + hash
+        return
+      }
+
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { window.location.href = '/landing'; return }
+
+      const { data: affilieCheck } = await supabase
+        .from('affilies')
+        .select('id')
+        .eq('email', user.email)
+        .single()
+
+      if (affilieCheck) { window.location.href = '/affilie'; return }
+      setUserEmail(user.email || '')
+
+      const { data: v } = await supabase
+        .from('vendeurs')
+        .select('*')
+        .eq('email', user.email)
+        .single()
+      setVendeur(v)
+
+      if (v) {
+        const { data: c } = await supabase
+          .from('codes')
+          .select('*, affilies(nom, email)')
+          .eq('vendeur_id', v.id)
+          .order('created_at', { ascending: false })
+        setCodes(c || [])
+      }
+      setLoading(false)
     }
-
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { window.location.href = '/landing'; return }
-    const { data: affilieCheck } = await supabase
-      .from('affilies')
-      .select('id')
-      .eq('email', user.email)
-      .single()
-
-    if (affilieCheck) { window.location.href = '/affilie'; return }
-    setUserEmail(user.email || '')
-
-    const { data: v } = await supabase
-      .from('vendeurs')
-      .select('*')
-      .eq('email', user.email)
-      .single()
-    setVendeur(v)
-
-    if (v) {
-      const { data: c } = await supabase
-        .from('codes')
-        .select('*, affilies(nom, email)')
-        .eq('vendeur_id', v.id)
-        .order('created_at', { ascending: false })
-      setCodes(c || [])
-    }
-    setLoading(false)
-  }
-  init()
-}, [])
+    init()
+  }, [])
 
   const totalCodes = codes.length
   const codesActifs = codes.filter(c => c.actif).length
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{background: '#F5F0E8'}}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F5F0E8' }}>
         <div className="text-sm text-stone-500">Chargement...</div>
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-screen" style={{background: '#F5F0E8'}}>
-
-      {/* Sidebar */}
-      <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
-        <div className="px-5 pb-6">
-         <Logo size="sm" />
-        </div>
-        <nav className="flex flex-col">
-          <div className="px-5 py-2 text-sm font-medium text-stone-900 bg-stone-100 border-l-2 border-stone-900 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-stone-900 inline-block"></span>
-            Tableau de bord
-          </div>
-          {[
-  { label: 'Mes codes', href: '/mes-codes' },
-  { label: 'Affiliés', href: '/affilies' },
-  { label: 'Stats', href: '/stats' },
-  { label: 'Paiements', href: '/paiements' },
-  { label: 'Boutiques', href: '/boutiques' },
-  { label: 'Support', href: '/support' },
-  { label: 'Paramètres', href: '/parametres' },
-].map(({ label, href }) => (
-  <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 cursor-pointer hover:text-stone-900">
-    <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
-    {label}
-  </a>
-))}
-        </nav>
-        <div className="mt-auto px-5 pb-4">
-          <div className="text-xs text-stone-400 mb-1">Connecté en tant que</div>
-          <div className="text-xs text-stone-600 font-medium truncate">{userEmail}</div>
-          <button
-            onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login' }}
-            className="mt-3 text-xs text-stone-400 hover:text-stone-600 cursor-pointer"
-          >
-            Se déconnecter
-          </button>
-        </div>
-      </div>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F0E8' }}>
+      <Sidebar active="Tableau de bord" email={userEmail} />
 
       {/* Main */}
       <div className="flex-1 p-6">
@@ -135,7 +97,7 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* MÃ©triques */}
+        {/* Métriques */}
         <div className="grid grid-cols-3 gap-2.5 mb-5">
           <div className="bg-white border border-stone-200 rounded-lg p-3.5">
             <div className="text-xs text-stone-400 mb-1.5">Codes créés</div>
@@ -176,7 +138,7 @@ export default function Dashboard() {
                   </span>
                 </div>
                 {[
-                  ['Affilié', c.affilies?.nom || '0€”'],
+                  ['Affilié', c.affilies?.nom || '—'],
                   ['Commission affilié', c.commission_pct + '%'],
                   ['Remise acheteur', c.remise_pct + '%'],
                 ].map(([label, val]) => (
@@ -190,7 +152,7 @@ export default function Dashboard() {
             <div
               onClick={() => window.location.href = '/nouveau-code'}
               className="border border-dashed border-stone-300 rounded-xl flex items-center justify-center cursor-pointer hover:bg-stone-50 min-h-32"
-              style={{background:'#F5F0E8'}}
+              style={{ background: '#F5F0E8' }}
             >
               <div className="text-center">
                 <div className="text-2xl text-stone-400 mb-1">+</div>
@@ -199,9 +161,7 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-
       </div>
     </div>
   )
 }
-
