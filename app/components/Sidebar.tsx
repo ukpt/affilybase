@@ -78,6 +78,8 @@ export default function Sidebar({ active, email }: { active: string, email?: str
       )}
 
       {/* Mobile spacer */}
+      {/* Mobile spacer */}
+<div className="md:hidden" style={{ height: '60px', flexShrink: 0 }}></div>
     </>
   )
 }
