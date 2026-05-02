@@ -1,18 +1,7 @@
 'use client'
-import Logo from '../components/Logo'
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
-
-const menuItems = [
-  { label: 'Tableau de bord', href: '/' },
-  { label: 'Mes codes', href: '/mes-codes' },
-  { label: 'Affiliés', href: '/affilies' },
-  { label: 'Stats', href: '/stats' },
-  { label: 'Paiements', href: '/paiements' },
-  { label: 'Boutiques', href: '/boutiques' },
-  { label: 'Support', href: '/support' },
-  { label: 'Paramètres', href: '/parametres' },
-]
+import Sidebar from '../components/Sidebar'
 
 export default function NouveauCode() {
   const [code, setCode] = useState('')
@@ -48,18 +37,10 @@ export default function NouveauCode() {
 
     const { data: affilie } = await supabase.from('affilies').insert({ vendeur_id: vendeurId, nom, email }).select('id').single()
 
-    // Créer le compte Auth pour l'affilié
     await fetch('/api/create-affilie', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email,
-        nom,
-        vendeurId,
-        code: code.toUpperCase(),
-        commissionPct: parseInt(commission),
-        remisePct: parseInt(remise),
-      })
+      body: JSON.stringify({ email, nom, vendeurId, code: code.toUpperCase(), commissionPct: parseInt(commission), remisePct: parseInt(remise) })
     })
 
     const { error } = await supabase.from('codes').insert({
@@ -84,7 +65,6 @@ export default function NouveauCode() {
     })
 
     const shopifyData = await shopifyRes.json()
-
     if (!shopifyRes.ok) {
       setMessage('Code enregistré mais erreur Shopify : ' + shopifyData.error)
     } else {
@@ -95,36 +75,24 @@ export default function NouveauCode() {
 
   if (succes) {
     return (
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F0E8' }}>
-        <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
-          <div className="px-5 pb-6"><Logo size="sm" /></div>
-          <nav className="flex flex-col">
-            {menuItems.map(({ label, href }) => (
-              <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 hover:text-stone-900">
-                <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
-                {label}
-              </a>
-            ))}
-          </nav>
-        </div>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
+        <Sidebar active="Mes codes" />
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
           <div style={{ width: '100%', maxWidth: '400px', textAlign: 'center' }}>
-            <div className="bg-white border border-stone-200 rounded-2xl p-10">
-              <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <div className="text-2xl text-green-600">✓</div>
-              </div>
-              <h2 className="text-base font-medium text-stone-900 mb-2">Code créé avec succès !</h2>
-              <div className="text-2xl font-mono font-medium text-stone-900 my-4 py-3 rounded-lg" style={{ background: '#F5F0E8' }}>
+            <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '16px', padding: '2.5rem' }}>
+              <div style={{ width: '56px', height: '56px', background: '#E1F5EE', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: '24px', color: '#1D9E75' }}>✓</div>
+              <h2 style={{ fontSize: '15px', fontWeight: 500, color: '#1a1a1a', marginBottom: '8px' }}>Code créé avec succès !</h2>
+              <div style={{ fontSize: '24px', fontFamily: 'monospace', fontWeight: 500, color: '#1a1a1a', margin: '1rem 0', padding: '0.75rem', borderRadius: '8px', background: '#F5F2EC' }}>
                 {code.toUpperCase()}
               </div>
-              <p className="text-sm text-stone-500 mb-2">Le code a été créé dans votre boutique Shopify !</p>
-              <p className="text-sm text-stone-500 mb-2">Un email d'invitation a été envoyé à <strong>{nom}</strong>.</p>
-              <p className="text-sm text-stone-500 mb-6">Il peut maintenant se connecter sur son espace affilié.</p>
-              <div className="flex flex-col gap-2">
-                <button onClick={() => window.location.href = '/'} className="w-full bg-stone-900 text-white text-sm font-medium py-2.5 rounded-lg cursor-pointer hover:bg-stone-700">
+              <p style={{ fontSize: '13px', color: '#888', marginBottom: '6px' }}>Le code a été créé dans votre boutique Shopify !</p>
+              <p style={{ fontSize: '13px', color: '#888', marginBottom: '6px' }}>Un email d'invitation a été envoyé à <strong>{nom}</strong>.</p>
+              <p style={{ fontSize: '13px', color: '#888', marginBottom: '1.5rem' }}>Il peut maintenant se connecter sur son espace affilié.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <button onClick={() => window.location.href = '/'} style={{ width: '100%', background: '#1a1a1a', color: '#fff', fontSize: '13px', fontWeight: 500, padding: '10px', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
                   Voir le dashboard
                 </button>
-                <button onClick={() => { setSucces(false); setCode(''); setNom(''); setEmail(''); setCommission(''); setRemise('') }} className="w-full border border-stone-200 text-stone-600 text-sm py-2.5 rounded-lg cursor-pointer hover:bg-stone-50">
+                <button onClick={() => { setSucces(false); setCode(''); setNom(''); setEmail(''); setCommission(''); setRemise('') }} style={{ width: '100%', background: 'transparent', color: '#555', fontSize: '13px', padding: '10px', borderRadius: '8px', border: '0.5px solid #ddd8ce', cursor: 'pointer' }}>
                   Créer un autre code
                 </button>
               </div>
@@ -136,84 +104,79 @@ export default function NouveauCode() {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F0E8' }}>
-      {/* Sidebar */}
-      <div className="w-52 bg-white border-r border-stone-200 flex flex-col py-5">
-        <div className="px-5 pb-6"><Logo size="sm" /></div>
-        <nav className="flex flex-col">
-          {menuItems.map(({ label, href }) => (
-            <a key={href} href={href} className="px-5 py-2 text-sm text-stone-500 flex items-center gap-2 hover:text-stone-900">
-              <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block"></span>
-              {label}
-            </a>
-          ))}
-        </nav>
-      </div>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
+      <Sidebar active="Mes codes" />
 
-      {/* Main */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
         <div style={{ width: '100%', maxWidth: '480px' }}>
-          <div className="bg-white border border-stone-200 rounded-2xl p-8">
-            <h1 className="text-base font-medium text-stone-900 mb-1">Créer un code d'affiliation</h1>
-            <p className="text-sm text-stone-500 mb-6">Le code sera créé automatiquement dans votre boutique Shopify</p>
+          <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '16px', padding: '2rem' }}>
+            <h1 style={{ fontSize: '15px', fontWeight: 500, color: '#1a1a1a', marginBottom: '4px' }}>Créer un code d'affiliation</h1>
+            <p style={{ fontSize: '12px', color: '#888', marginBottom: '1.5rem' }}>Le code sera créé automatiquement dans votre boutique Shopify</p>
 
-            <div className="flex flex-col gap-5">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <label className="text-xs font-medium text-stone-700 block mb-1.5">Nom du code</label>
-                <input type="text" placeholder="ex: MARIE20" value={code} onChange={e => setCode(e.target.value.toUpperCase())} className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm font-mono text-stone-900 outline-none focus:border-stone-400" style={{ background: '#FDFAF5' }} />
+                <label style={{ fontSize: '12px', fontWeight: 500, color: '#555', display: 'block', marginBottom: '6px' }}>Nom du code</label>
+                <input type="text" placeholder="ex: MARIE20" value={code} onChange={e => setCode(e.target.value.toUpperCase())} style={{ width: '100%', border: '0.5px solid #ddd8ce', borderRadius: '8px', padding: '10px 12px', fontSize: '13px', fontFamily: 'monospace', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-stone-700 block mb-1.5">Nom de l'affilié</label>
-                <input type="text" placeholder="ex: Marie Aubry" value={nom} onChange={e => setNom(e.target.value)} className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm text-stone-900 outline-none focus:border-stone-400" style={{ background: '#FDFAF5' }} />
+                <label style={{ fontSize: '12px', fontWeight: 500, color: '#555', display: 'block', marginBottom: '6px' }}>Nom de l'affilié</label>
+                <input type="text" placeholder="ex: Marie Aubry" value={nom} onChange={e => setNom(e.target.value)} style={{ width: '100%', border: '0.5px solid #ddd8ce', borderRadius: '8px', padding: '10px 12px', fontSize: '13px', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-stone-700 block mb-1.5">Email de l'affilié</label>
-                <input type="email" placeholder="marie@email.fr" value={email} onChange={e => setEmail(e.target.value)} className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm text-stone-900 outline-none focus:border-stone-400" style={{ background: '#FDFAF5' }} />
+                <label style={{ fontSize: '12px', fontWeight: 500, color: '#555', display: 'block', marginBottom: '6px' }}>Email de l'affilié</label>
+                <input type="email" placeholder="marie@email.fr" value={email} onChange={e => setEmail(e.target.value)} style={{ width: '100%', border: '0.5px solid #ddd8ce', borderRadius: '8px', padding: '10px 12px', fontSize: '13px', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label className="text-xs font-medium text-stone-700 block mb-1.5">Commission affilié</label>
-                  <div className="relative">
-                    <input type="number" placeholder="10" min="1" max="50" value={commission} onChange={e => setCommission(e.target.value)} className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm text-stone-900 outline-none focus:border-stone-400 pr-8" style={{ background: '#FDFAF5' }} />
-                    <span className="absolute right-3 top-2.5 text-sm text-stone-400">%</span>
+                  <label style={{ fontSize: '12px', fontWeight: 500, color: '#555', display: 'block', marginBottom: '6px' }}>Commission affilié</label>
+                  <div style={{ position: 'relative' }}>
+                    <input type="number" placeholder="10" min="1" max="50" value={commission} onChange={e => setCommission(e.target.value)} style={{ width: '100%', border: '0.5px solid #ddd8ce', borderRadius: '8px', padding: '10px 28px 10px 12px', fontSize: '13px', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
+                    <span style={{ position: 'absolute', right: '10px', top: '10px', fontSize: '13px', color: '#aaa' }}>%</span>
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-stone-700 block mb-1.5">Remise acheteur</label>
-                  <div className="relative">
-                    <input type="number" placeholder="20" min="1" max="80" value={remise} onChange={e => setRemise(e.target.value)} className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm text-stone-900 outline-none focus:border-stone-400 pr-8" style={{ background: '#FDFAF5' }} />
-                    <span className="absolute right-3 top-2.5 text-sm text-stone-400">%</span>
+                  <label style={{ fontSize: '12px', fontWeight: 500, color: '#555', display: 'block', marginBottom: '6px' }}>Remise acheteur</label>
+                  <div style={{ position: 'relative' }}>
+                    <input type="number" placeholder="20" min="1" max="80" value={remise} onChange={e => setRemise(e.target.value)} style={{ width: '100%', border: '0.5px solid #ddd8ce', borderRadius: '8px', padding: '10px 28px 10px 12px', fontSize: '13px', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
+                    <span style={{ position: 'absolute', right: '10px', top: '10px', fontSize: '13px', color: '#aaa' }}>%</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-medium text-stone-700 block mb-1.5">Applicable sur</label>
-                <div className="flex gap-2">
-                  <button onClick={() => setProduits('tout')} className={`flex-1 text-sm py-2 rounded-lg cursor-pointer transition-all ${produits === 'tout' ? 'bg-stone-900 text-white font-medium' : 'border border-stone-200 text-stone-500 hover:bg-stone-50'}`}>Toute la boutique</button>
-                  <button onClick={() => setProduits('choisis')} className={`flex-1 text-sm py-2 rounded-lg cursor-pointer transition-all ${produits === 'choisis' ? 'bg-stone-900 text-white font-medium' : 'border border-stone-200 text-stone-500 hover:bg-stone-50'}`}>Produits choisis</button>
+                <label style={{ fontSize: '12px', fontWeight: 500, color: '#555', display: 'block', marginBottom: '6px' }}>Applicable sur</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => setProduits('tout')} style={{ flex: 1, fontSize: '13px', padding: '8px', borderRadius: '8px', cursor: 'pointer', background: produits === 'tout' ? '#1a1a1a' : '#F5F2EC', color: produits === 'tout' ? '#fff' : '#555', border: '0.5px solid #ddd8ce', fontWeight: produits === 'tout' ? 500 : 400 }}>Toute la boutique</button>
+                  <button onClick={() => setProduits('choisis')} style={{ flex: 1, fontSize: '13px', padding: '8px', borderRadius: '8px', cursor: 'pointer', background: produits === 'choisis' ? '#1a1a1a' : '#F5F2EC', color: produits === 'choisis' ? '#fff' : '#555', border: '0.5px solid #ddd8ce', fontWeight: produits === 'choisis' ? 500 : 400 }}>Produits choisis</button>
                 </div>
               </div>
 
-              <div className="rounded-xl p-4" style={{ background: '#F5F0E8' }}>
-                <div className="text-xs font-medium text-stone-700 mb-3">Récapitulatif</div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex justify-between text-xs"><span className="text-stone-500">Code</span><span className="text-stone-900 font-mono font-medium">{code || '—'}</span></div>
-                  <div className="flex justify-between text-xs"><span className="text-stone-500">Commission affilié</span><span className="text-stone-900 font-medium">{commission ? commission + '%' : '—'}</span></div>
-                  <div className="flex justify-between text-xs"><span className="text-stone-500">Remise acheteur</span><span className="text-stone-900 font-medium">{remise ? remise + '%' : '—'}</span></div>
-                  <div className="flex justify-between text-xs"><span className="text-stone-500">Créé dans Shopify</span><span className="text-green-700 font-medium">Automatiquement</span></div>
-                  <div className="flex justify-between text-xs"><span className="text-stone-500">Invitation affilié</span><span className="text-green-700 font-medium">Par email</span></div>
+              <div style={{ background: '#F5F2EC', borderRadius: '10px', padding: '1rem' }}>
+                <div style={{ fontSize: '12px', fontWeight: 500, color: '#555', marginBottom: '10px' }}>Récapitulatif</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {[
+                    ['Code', code || '—', true],
+                    ['Commission affilié', commission ? commission + '%' : '—', false],
+                    ['Remise acheteur', remise ? remise + '%' : '—', false],
+                    ['Créé dans Shopify', 'Automatiquement', false],
+                    ['Invitation affilié', 'Par email', false],
+                  ].map(([label, val, mono]) => (
+                    <div key={label as string} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                      <span style={{ color: '#888' }}>{label}</span>
+                      <span style={{ color: '#1a1a1a', fontWeight: 500, fontFamily: mono ? 'monospace' : 'inherit' }}>{val}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
               {message && (
-                <div className="text-xs text-center py-2 px-3 rounded-lg bg-red-50 text-red-600 border border-red-100">{message}</div>
+                <div style={{ fontSize: '12px', textAlign: 'center', padding: '8px 12px', borderRadius: '8px', background: '#FAECE7', color: '#993C1D', border: '0.5px solid #f0997b' }}>{message}</div>
               )}
 
-              <button onClick={handleSubmit} disabled={loading} className="w-full bg-stone-900 text-white text-sm font-medium py-3 rounded-lg cursor-pointer hover:bg-stone-700 disabled:opacity-50">
+              <button onClick={handleSubmit} disabled={loading} style={{ width: '100%', background: loading ? '#ccc' : '#1a1a1a', color: '#fff', fontSize: '13px', fontWeight: 500, padding: '12px', borderRadius: '8px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer' }}>
                 {loading ? 'Création en cours...' : "Créer le code et envoyer l'invitation"}
               </button>
             </div>
