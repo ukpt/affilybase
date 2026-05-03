@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 
 const ADMIN_EMAIL = 'w.albouy@orange.fr'
+const EMAILS_EXCLUS = ['w.albouy@orange.fr', 'cwaevenements@outlook.fr']
 
 const PLAN_PRICE: Record<string, number> = {
   starter: 4.99,
@@ -32,16 +33,18 @@ export default function Admin() {
       const { data: codesData } = await supabase.from('codes').select('vendeur_id')
       const { data: ventesData } = await supabase.from('ventes').select('*, codes(vendeur_id)')
 
-      const vendeursEnrichis = (vendeursData || []).map(v => {
-        const moisAbonne = v.plan !== 'free' && v.created_at
-          ? Math.max(1, Math.floor((Date.now() - new Date(v.created_at).getTime()) / (1000 * 60 * 60 * 24 * 30)))
-          : 0
-        const prixPlan = PLAN_PRICE[v.plan] || 0
-        const revenuTotal = moisAbonne * prixPlan
-        const nbCodes = (codesData || []).filter(c => c.vendeur_id === v.id).length
-        const nbVentes = (ventesData || []).filter(vente => vente.codes?.vendeur_id === v.id).length
-        return { ...v, moisAbonne, revenuTotal, nbCodes, nbVentes }
-      })
+      const vendeursEnrichis = (vendeursData || [])
+        .filter(v => !EMAILS_EXCLUS.includes(v.email))
+        .map(v => {
+          const moisAbonne = v.plan !== 'free' && v.created_at
+            ? Math.max(1, Math.floor((Date.now() - new Date(v.created_at).getTime()) / (1000 * 60 * 60 * 24 * 30)))
+            : 0
+          const prixPlan = PLAN_PRICE[v.plan] || 0
+          const revenuTotal = moisAbonne * prixPlan
+          const nbCodes = (codesData || []).filter(c => c.vendeur_id === v.id).length
+          const nbVentes = (ventesData || []).filter(vente => vente.codes?.vendeur_id === v.id).length
+          return { ...v, moisAbonne, revenuTotal, nbCodes, nbVentes }
+        })
 
       setVendeurs(vendeursEnrichis)
 
