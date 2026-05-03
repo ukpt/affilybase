@@ -38,7 +38,7 @@ export default function Support() {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
       <Sidebar active="Support" email={vendeur?.email} />
 
-      <div style={{ flex: 1, padding: '1.5rem', overflowX: 'hidden' }}>
+      <div className="page-content" style={{ flex: 1, padding: '1.5rem', overflowX: 'hidden' }}>
         <div style={{ marginBottom: '1.5rem' }}>
           <h1 style={{ fontSize: '16px', fontWeight: 500, color: '#1a1a1a' }}>Support prioritaire</h1>
           <p style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>Nous répondons à vos demandes sous 2h</p>

@@ -79,7 +79,7 @@ export default function Paiements() {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
       <Sidebar active="Paiements" email={vendeur?.email} />
 
-      <div style={{ flex: 1, padding: '1.5rem', maxWidth: '800px', overflowX: 'hidden' }}>
+      <div className="page-content" style={{ flex: 1, padding: '1.5rem', maxWidth: '800px', overflowX: 'hidden' }}>
         <div style={{ marginBottom: '1.5rem' }}>
           <h1 style={{ fontSize: '16px', fontWeight: 500, marginBottom: '2px' }}>Paiements</h1>
           <p style={{ fontSize: '12px', color: '#888' }}>Suivez et gérez les commissions de vos affiliés</p>

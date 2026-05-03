@@ -37,7 +37,7 @@ export default function MesCodes() {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
       <Sidebar active="Mes codes" email={email} />
 
-      <div style={{ flex: 1, padding: '1.5rem', overflowX: 'hidden' }}>
+      <div className="page-content" style={{ flex: 1, padding: '1.5rem', overflowX: 'hidden' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '10px' }}>
           <h1 style={{ fontSize: '16px', fontWeight: 500 }}>Mes codes d'affiliation</h1>
           <a href="/nouveau-code" style={{ background: '#1a1a1a', color: '#fff', borderRadius: '6px', padding: '0.5rem 1rem', fontSize: '13px', textDecoration: 'none' }}>+ Nouveau code</a>

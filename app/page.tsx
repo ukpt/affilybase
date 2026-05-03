@@ -81,7 +81,7 @@ export default function Dashboard() {
       <Sidebar active="Tableau de bord" email={userEmail} />
 
       {/* Main */}
-      <div className="flex-1 p-6">
+      className="flex-1 p-6 page-content"
 
         {/* Topbar */}
         <div className="flex items-center justify-between mb-6">

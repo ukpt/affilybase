@@ -49,7 +49,7 @@ export default function Boutiques() {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
       <Sidebar active="Boutiques" email={vendeur?.email} />
 
-      <div style={{ flex: 1, padding: '1.5rem', overflowX: 'hidden' }}>
+      <div className="page-content" style={{ flex: 1, padding: '1.5rem', overflowX: 'hidden' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '10px' }}>
           <div>
             <h1 style={{ fontSize: '16px', fontWeight: 500, color: '#1a1a1a' }}>Mes boutiques</h1>

@@ -88,7 +88,7 @@ export default function Parametres() {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
       <Sidebar active="Paramètres" email={vendeur?.email} />
 
-      <div style={{ flex: 1, padding: '1.5rem', maxWidth: '720px', overflowX: 'hidden' }}>
+      <div className="page-content" style={{ flex: 1, padding: '1.5rem', maxWidth: '720px', overflowX: 'hidden' }}>
         <div style={{ marginBottom: '1.5rem' }}>
           <h1 style={{ fontSize: '16px', fontWeight: 500, marginBottom: '2px', color: '#1a1a1a' }}>Paramètres</h1>
           <p style={{ fontSize: '12px', color: '#888' }}>Configurez votre compte et votre programme d'affiliation</p>
@@ -202,7 +202,6 @@ export default function Parametres() {
               </a>
             )}
           </div>
-
           <div style={{ borderTop: '0.5px solid #ddd8ce', paddingTop: '12px', marginBottom: '12px' }}>
             <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Changer le mot de passe</div>
             <button onClick={async () => {
@@ -212,7 +211,6 @@ export default function Parametres() {
               Envoyer un email de réinitialisation
             </button>
           </div>
-
           {vendeur?.plan !== 'free' && !vendeur?.plan_cancel_at_period_end && (
             <div style={{ borderTop: '0.5px solid #ddd8ce', paddingTop: '12px' }}>
               {!showResilier ? (
@@ -237,7 +235,6 @@ export default function Parametres() {
               )}
             </div>
           )}
-
           {vendeur?.plan_cancel_at_period_end && (
             <div style={{ borderTop: '0.5px solid #ddd8ce', paddingTop: '12px', fontSize: '12px', color: '#D85A30' }}>
               Votre abonnement sera résilié à la fin de la période en cours.

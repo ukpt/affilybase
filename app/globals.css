@@ -4,4 +4,8 @@
   .sidebar-desktop {
     display: none !important;
   }
+  
+  .page-content {
+    padding-top: 70px !important;
+  }
 }
