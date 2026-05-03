@@ -80,8 +80,7 @@ export default function Dashboard() {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F0E8' }}>
       <Sidebar active="Tableau de bord" email={userEmail} />
 
-      {/* Main */}
-      className="flex-1 p-6 page-content"
+      <div className="flex-1 p-6 page-content">
 
         {/* Topbar */}
         <div className="flex items-center justify-between mb-6">
