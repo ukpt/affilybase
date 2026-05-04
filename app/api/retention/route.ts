@@ -23,7 +23,6 @@ export async function GET(request: Request) {
   j29Min.setDate(j29Min.getDate() - 30)
   j29Max.setDate(j29Max.getDate() - 29)
 
-  // Vendeurs inscrits il y a 29-30 jours en plan free
   const { data: vendeurs } = await supabase
     .from('vendeurs')
     .select('*, codes(*), ventes(*)')
@@ -41,22 +40,23 @@ export async function GET(request: Request) {
     const aDesVentes = vendeur.ventes && vendeur.ventes.length > 0
 
     if (aDesVentes) {
-      // CAS 2 — A converti → orienter vers plan payant
       await resend.emails.send({
         from: 'Affilybase <noreply@affilybase.com>',
         to: vendeur.email,
         subject: '🎉 Félicitations — vous avez généré vos premières ventes !',
         html: `
-          <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a;">
-            <div style="text-align: center; padding: 32px 0 24px;">
-              <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.02em;">Affily<span style="font-size: 10px; letter-spacing: 0.2em; display: block; color: #888; font-weight: 400;">BASE</span></div>
+          <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a; background: #F5F2EC; padding: 24px; border-radius: 12px;">
+            <div style="text-align: center; padding: 24px 0 20px;">
+              <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.02em;">Affily</div>
+              <div style="font-size: 10px; letter-spacing: 0.2em; color: #888; font-weight: 400;">BASE</div>
             </div>
 
             <div style="background: #fff; border: 0.5px solid #ddd8ce; border-radius: 12px; padding: 32px;">
-              <h1 style="font-size: 20px; font-weight: 500; margin-bottom: 8px;">Votre programme fonctionne ! 🚀</h1>
+              <h1 style="font-size: 20px; font-weight: 500; margin-bottom: 8px; margin-top: 0;">Votre programme fonctionne ! 🚀</h1>
               <p style="font-size: 14px; color: #555; line-height: 1.7; margin-bottom: 20px;">
                 Bonjour ${vendeur.nom || vendeur.email},<br><br>
-                Votre période d'essai gratuite se termine dans <strong>1 jour</strong>. Et bonne nouvelle — votre programme d'affiliation a déjà généré des ventes !
+                Votre période d'essai gratuite se termine dans <strong>1 jour</strong>. Et bonne nouvelle — votre programme d'affiliation a déjà généré des ventes !<br><br>
+                Pourquoi s'arrêter là ? La visibilité en ligne est la base de toute vente sur internet. Plus vos affiliés partagent votre boutique, plus vous touchez de nouveaux clients — sans dépenser un euro en publicité. Affilybase est conçu pour vous aider à faire connaître votre boutique au plus grand nombre, grâce à un réseau d'ambassadeurs qui parlent de vous chaque jour.
               </p>
 
               <div style="background: #E1F5EE; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
@@ -67,12 +67,12 @@ export async function GET(request: Request) {
               </div>
 
               <div style="display: flex; gap: 12px; margin-bottom: 24px;">
-                <div style="flex: 1; background: #F5F2EC; border-radius: 8px; padding: 16px; text-align: center;">
+                <div style="flex: 1; background: #F5F2EC; border-radius: 8px; padding: 16px; text-align: center; border: 0.5px solid #ddd8ce;">
                   <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Starter</div>
                   <div style="font-size: 22px; font-weight: 500; color: #1D9E75; margin-bottom: 4px;">4.99€</div>
                   <div style="font-size: 12px; color: #888;">par mois · 20 codes</div>
                 </div>
-                <div style="flex: 1; background: #F5F2EC; border-radius: 8px; padding: 16px; text-align: center;">
+                <div style="flex: 1; background: #F5F2EC; border-radius: 8px; padding: 16px; text-align: center; border: 0.5px solid #ddd8ce;">
                   <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Pro</div>
                   <div style="font-size: 22px; font-weight: 500; color: #1D9E75; margin-bottom: 4px;">9.99€</div>
                   <div style="font-size: 12px; color: #888;">par mois · 50 codes</div>
@@ -91,7 +91,6 @@ export async function GET(request: Request) {
         `
       })
     } else {
-      // CAS 1 — Pas de conversion → prolonger de 30 jours
       const nouvelleDate = new Date()
       nouvelleDate.setDate(nouvelleDate.getDate() + 30)
 
@@ -104,13 +103,14 @@ export async function GET(request: Request) {
         to: vendeur.email,
         subject: '🎁 On vous offre 30 jours supplémentaires gratuits',
         html: `
-          <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a;">
-            <div style="text-align: center; padding: 32px 0 24px;">
-              <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.02em;">Affily<span style="font-size: 10px; letter-spacing: 0.2em; display: block; color: #888; font-weight: 400;">BASE</span></div>
+          <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a; background: #F5F2EC; padding: 24px; border-radius: 12px;">
+            <div style="text-align: center; padding: 24px 0 20px;">
+              <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.02em;">Affily</div>
+              <div style="font-size: 10px; letter-spacing: 0.2em; color: #888; font-weight: 400;">BASE</div>
             </div>
 
             <div style="background: #fff; border: 0.5px solid #ddd8ce; border-radius: 12px; padding: 32px;">
-              <h1 style="font-size: 20px; font-weight: 500; margin-bottom: 8px;">Un cadeau pour vous lancer 🎁</h1>
+              <h1 style="font-size: 20px; font-weight: 500; margin-bottom: 8px; margin-top: 0;">Un cadeau pour vous lancer 🎁</h1>
               <p style="font-size: 14px; color: #555; line-height: 1.7; margin-bottom: 20px;">
                 Bonjour ${vendeur.nom || vendeur.email},<br><br>
                 Votre période d'essai gratuite se termine demain. On sait que lancer un programme d'affiliation prend du temps — c'est pourquoi on vous offre <strong>30 jours supplémentaires gratuits</strong> pour trouver vos premiers affiliés.
@@ -124,16 +124,18 @@ export async function GET(request: Request) {
 
               <div style="margin-bottom: 24px;">
                 <div style="font-size: 13px; font-weight: 500; margin-bottom: 12px; color: #1a1a1a;">Quelques idées pour démarrer :</div>
-                ${[
-                  ['🏪', 'Contactez des boutiques complémentaires sur Instagram pour échanger des codes'],
-                  ['📱', 'Approchez un micro-influenceur dans votre niche avec une proposition simple'],
-                  ['👥', 'Invitez vos 3 meilleurs clients à devenir affiliés'],
-                ].map(([icon, text]) => `
-                  <div style="display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; color: #555; align-items: flex-start;">
-                    <span>${icon}</span>
-                    <span>${text}</span>
-                  </div>
-                `).join('')}
+                <div style="display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; color: #555; align-items: flex-start;">
+                  <span>🏪</span>
+                  <span>Contactez des boutiques complémentaires sur Instagram pour échanger des codes</span>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; color: #555; align-items: flex-start;">
+                  <span>📱</span>
+                  <span>Approchez un micro-influenceur dans votre niche avec une proposition simple</span>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; color: #555; align-items: flex-start;">
+                  <span>👥</span>
+                  <span>Invitez vos 3 meilleurs clients à devenir affiliés</span>
+                </div>
               </div>
 
               <a href="https://affilybase.com" style="display: block; text-align: center; background: #1a1a1a; color: #fff; text-decoration: none; border-radius: 8px; padding: 14px; font-size: 14px; font-weight: 500;">
