@@ -12,6 +12,7 @@ export default function Parametres() {
   const [nom, setNom] = useState('')
   const [email, setEmail] = useState('')
   const [shopifyUrl, setShopifyUrl] = useState('')
+  const [autreUrl, setAutreUrl] = useState('')
   const [messageAccueil, setMessageAccueil] = useState("On est vraiment contents de t'avoir avec nous dans notre programme d'affiliation !")
   const [devise, setDevise] = useState('€')
   const [logoUrl, setLogoUrl] = useState('')
@@ -28,6 +29,7 @@ export default function Parametres() {
         setNom(v.nom || '')
         setEmail(v.email || '')
         setShopifyUrl(v.shopify_url || '')
+        setAutreUrl(v.autre_url || '')
         setMessageAccueil(v.message_accueil || "On est vraiment contents de t'avoir avec nous dans notre programme d'affiliation !")
         setDevise(v.devise || '€')
         setLogoUrl(v.logo_url || '')
@@ -44,6 +46,7 @@ export default function Parametres() {
     await supabase.from('vendeurs').update({
       nom,
       shopify_url: typeBoutique === 'shopify' ? shopifyUrl : null,
+      autre_url: typeBoutique === 'autre' ? autreUrl : null,
       message_accueil: messageAccueil,
       devise,
     }).eq('id', vendeur.id)
@@ -138,15 +141,31 @@ export default function Parametres() {
               </button>
             </div>
           </div>
+
           {typeBoutique === 'shopify' && (
             <div style={{ marginBottom: '12px' }}>
               <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>URL Shopify</div>
               <input value={shopifyUrl} onChange={e => setShopifyUrl(e.target.value)} placeholder="ma-boutique.myshopify.com" style={{ width: '100%', padding: '8px 12px', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '13px', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
             </div>
           )}
+
+          {typeBoutique === 'autre' && (
+            <div style={{ marginBottom: '12px' }}>
+              <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>URL de votre site</div>
+              <input value={autreUrl} onChange={e => setAutreUrl(e.target.value)} placeholder="https://mon-site.fr" style={{ width: '100%', padding: '8px 12px', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '13px', background: '#F5F2EC', outline: 'none', boxSizing: 'border-box' }} />
+              <div style={{ fontSize: '11px', color: '#aaa', marginTop: '4px' }}>Les clics des affiliés seront redirigés vers cette URL</div>
+            </div>
+          )}
+
           <div style={{ background: '#E1F5EE', borderRadius: '8px', padding: '10px 14px' }}>
-            <div style={{ fontSize: '12px', fontWeight: 500, color: '#085041', marginBottom: '3px' }}>Lien affilié pour les boutiques sans Shopify</div>
-            <div style={{ fontSize: '12px', color: '#0F6E56', marginBottom: '8px' }}>Partagez ce lien à vos affiliés s'ils n'ont pas de boutique Shopify. Les clics seront trackés automatiquement.</div>
+            <div style={{ fontSize: '12px', fontWeight: 500, color: '#085041', marginBottom: '3px' }}>
+              {typeBoutique === 'autre' ? 'Lien de tracking universel' : 'Lien affilié pour les boutiques sans Shopify'}
+            </div>
+            <div style={{ fontSize: '12px', color: '#0F6E56', marginBottom: '8px' }}>
+              {typeBoutique === 'autre'
+                ? 'Partagez ce lien à vos affiliés. Les clics seront trackés et redirigés vers votre site.'
+                : "Partagez ce lien à vos affiliés s'ils n'ont pas de boutique Shopify. Les clics seront trackés automatiquement."}
+            </div>
             <div style={{ background: '#fff', borderRadius: '6px', padding: '7px 12px', fontSize: '12px', color: '#1D9E75', fontFamily: 'monospace', wordBreak: 'break-all' }}>
               {lienAffilie}
             </div>
