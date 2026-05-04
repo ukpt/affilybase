@@ -49,12 +49,15 @@ export default function Onboarding() {
       }).eq('id', existing.id)
       setVendeur({ ...existing, nom })
     } else {
+      const freeTrialEnd = new Date()
+      freeTrialEnd.setDate(freeTrialEnd.getDate() + 30)
       const { data: newV } = await supabase.from('vendeurs').insert({
         email: user.email,
         nom,
         shopify_url: typeBoutique === 'shopify' ? shopifyUrl : null,
         autre_url: typeBoutique === 'autre' ? autreUrl : null,
         plan: 'free',
+        free_trial_end: freeTrialEnd.toISOString(),
       }).select().single()
       setVendeur(newV)
     }
@@ -85,8 +88,6 @@ export default function Onboarding() {
     setCreatingCode(false)
     window.location.href = '/'
   }
-
-  const nbEtapes = modeGuide ? 1 : 3
 
   const Etapes = () => (
     !modeGuide ? (
