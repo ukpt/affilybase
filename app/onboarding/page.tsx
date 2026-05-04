@@ -5,14 +5,13 @@ import Logo from '../components/Logo'
 
 export default function Onboarding() {
   const [etape, setEtape] = useState(1)
+  const [modeGuide, setModeGuide] = useState(false)
   const [nom, setNom] = useState('')
   const [typeBoutique, setTypeBoutique] = useState<'shopify' | 'autre'>('shopify')
   const [shopifyUrl, setShopifyUrl] = useState('')
   const [autreUrl, setAutreUrl] = useState('')
   const [saving, setSaving] = useState(false)
   const [vendeur, setVendeur] = useState<any>(null)
-
-  // Onboarding étape 2 — code affilié
   const [code, setCode] = useState('')
   const [nomAffilie, setNomAffilie] = useState('')
   const [emailAffilie, setEmailAffilie] = useState('')
@@ -23,6 +22,11 @@ export default function Onboarding() {
 
   useEffect(() => {
     const init = async () => {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('mode') === 'guide') {
+        setModeGuide(true)
+        setEtape(2)
+      }
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/login'; return }
       const { data: v } = await supabase.from('vendeurs').select('*').eq('email', user.email).single()
@@ -36,7 +40,6 @@ export default function Onboarding() {
     setSaving(true)
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
-
     const { data: existing } = await supabase.from('vendeurs').select('id').eq('email', user.email).single()
     if (existing) {
       await supabase.from('vendeurs').update({
@@ -83,17 +86,21 @@ export default function Onboarding() {
     window.location.href = '/'
   }
 
+  const nbEtapes = modeGuide ? 1 : 3
+
   const Etapes = () => (
-    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '2rem' }}>
-      {[1, 2, 3].map((n, i) => (
-        <>
-          <div key={n} style={{ width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 500, flexShrink: 0, background: etape > n ? '#E1F5EE' : etape === n ? '#1a1a1a' : '#F5F2EC', color: etape > n ? '#085041' : etape === n ? '#fff' : '#888' }}>
-            {etape > n ? '✓' : n}
+    !modeGuide ? (
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '2rem' }}>
+        {[1, 2, 3].map((n, i) => (
+          <div key={n} style={{ display: 'flex', alignItems: 'center', flex: i < 2 ? 1 : 'none', gap: '8px' }}>
+            <div style={{ width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 500, flexShrink: 0, background: etape > n ? '#E1F5EE' : etape === n ? '#1a1a1a' : '#F5F2EC', color: etape > n ? '#085041' : etape === n ? '#fff' : '#888' }}>
+              {etape > n ? '✓' : n}
+            </div>
+            {i < 2 && <div style={{ flex: 1, height: '1px', background: '#ddd8ce' }}></div>}
           </div>
-          {i < 2 && <div key={`line-${n}`} style={{ flex: 1, height: '1px', background: '#ddd8ce' }}></div>}
-        </>
-      ))}
-    </div>
+        ))}
+      </div>
+    ) : null
   )
 
   return (
@@ -155,7 +162,6 @@ export default function Onboarding() {
             <h1 style={{ fontSize: '20px', fontWeight: 500, color: '#1a1a1a', marginBottom: '4px' }}>Comment ça marche ?</h1>
             <p style={{ fontSize: '13px', color: '#888', marginBottom: '1.5rem' }}>Tout ce qu'il faut savoir pour bien démarrer votre programme d'affiliation.</p>
 
-            {/* Principe */}
             <div style={{ marginBottom: '1.5rem' }}>
               <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '10px', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>Le principe en 3 étapes</div>
               {[
@@ -168,8 +174,6 @@ export default function Onboarding() {
                   <div style={{ fontSize: '13px', color: '#1a1a1a', lineHeight: 1.5 }}>{title}<span style={{ fontSize: '12px', color: '#888', display: 'block', marginTop: '2px' }}>{sub}</span></div>
                 </div>
               ))}
-
-              {/* Tableau plateformes */}
               <div style={{ borderRadius: '8px', overflow: 'hidden', border: '0.5px solid #ddd8ce', marginTop: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderBottom: '0.5px solid #ddd8ce', background: '#E1F5EE' }}>
                   <span style={{ fontSize: '10px', fontWeight: 500, padding: '2px 8px', borderRadius: '20px', background: '#9FE1CB', color: '#04342C', flexShrink: 0 }}>Automatique</span>
@@ -184,7 +188,6 @@ export default function Onboarding() {
               </div>
             </div>
 
-            {/* Trouver affiliés */}
             <div style={{ marginBottom: '1.5rem' }}>
               <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '10px', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>Comment trouver de bons affiliés ?</div>
               {[
@@ -201,7 +204,6 @@ export default function Onboarding() {
               ))}
             </div>
 
-            {/* Conseil clé */}
             <div style={{ background: '#E1F5EE', borderRadius: '8px', padding: '14px 16px', marginBottom: '1.5rem' }}>
               <div style={{ fontSize: '13px', fontWeight: 500, color: '#085041', marginBottom: '8px' }}>Conseil clé pour bien convertir</div>
               <div style={{ fontSize: '12px', color: '#0F6E56', lineHeight: 1.7, marginBottom: '10px' }}>Il n'y a pas de chiffre universel — chaque boutique a ses propres marges. L'essentiel est de trouver l'équilibre qui motive votre affilié sans impacter votre rentabilité.</div>
@@ -217,9 +219,15 @@ export default function Onboarding() {
               ))}
             </div>
 
-            <button onClick={() => setEtape(3)} style={{ width: '100%', padding: '12px', background: '#1a1a1a', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}>
-              Continuer — créer mon premier code →
-            </button>
+            {modeGuide ? (
+              <button onClick={() => window.location.href = '/'} style={{ width: '100%', padding: '12px', background: '#1a1a1a', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}>
+                Retour au dashboard →
+              </button>
+            ) : (
+              <button onClick={() => setEtape(3)} style={{ width: '100%', padding: '12px', background: '#1a1a1a', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}>
+                Continuer — créer mon premier code →
+              </button>
+            )}
           </div>
         )}
 
@@ -278,7 +286,7 @@ export default function Onboarding() {
         )}
 
         <p style={{ textAlign: 'center', fontSize: '12px', color: '#888', marginTop: '1rem' }}>
-          Étape {etape} sur 3
+          {modeGuide ? 'Guide de démarrage' : `Étape ${etape} sur 3`}
         </p>
       </div>
     </div>
