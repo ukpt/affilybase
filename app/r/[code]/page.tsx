@@ -17,9 +17,21 @@ export default async function RedirectCode({ params }: { params: Promise<{ code:
     .single()
 
   if (!data) redirect('/landing')
-  
-  const shopifyUrl = data.vendeurs?.shopify_url
-  if (!shopifyUrl) redirect('/landing')
 
-  redirect(`${shopifyUrl}?discount=${upperCode}`)
+  const shopifyUrl = data.vendeurs?.shopify_url
+  const autreUrl = data.vendeurs?.autre_url
+
+  // Mode Shopify
+  if (shopifyUrl) {
+    redirect(`${shopifyUrl}?discount=${upperCode}`)
+  }
+
+  // Mode Autre / Sans boutique
+  if (autreUrl) {
+    const url = autreUrl.startsWith('http') ? autreUrl : `https://${autreUrl}`
+    redirect(`${url}?ref=${upperCode}`)
+  }
+
+  // Aucune URL configurée
+  redirect('/landing')
 }
