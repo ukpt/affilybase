@@ -42,7 +42,7 @@ export default function Login() {
           if (affilie) {
             window.location.href = '/affilie'
           } else {
-            window.location.href = '/'
+            window.location.href = '/onboarding'
           }
         }
       }
@@ -146,7 +146,7 @@ export default function Login() {
 
           <p
             onClick={async () => {
-              if (!email) { setMessage('Entrez votre email d\'abord'); return }
+              if (!email) { setMessage("Entrez votre email d'abord"); return }
               await supabase.auth.resetPasswordForEmail(email, {
                 redirectTo: 'https://www.affilybase.com/reset-password'
               })
