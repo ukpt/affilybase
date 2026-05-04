@@ -88,12 +88,21 @@ export default function Dashboard() {
             <h1 className="text-base font-medium text-stone-900">Tableau de bord</h1>
             <p className="text-xs text-stone-500 mt-0.5">Bienvenue sur Affily</p>
           </div>
-          <button
-            onClick={() => window.location.href = '/nouveau-code'}
-            className="text-xs font-medium bg-stone-900 text-white px-3 py-1.5 rounded cursor-pointer hover:bg-stone-700"
-          >
-            + Nouveau code
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={() => window.location.href = '/onboarding'}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '5px 10px', fontSize: '12px', color: '#888', cursor: 'pointer' }}
+            >
+              <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#1D9E75', color: '#fff', fontSize: '10px', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>?</div>
+              Guide
+            </button>
+            <button
+              onClick={() => window.location.href = '/nouveau-code'}
+              className="text-xs font-medium bg-stone-900 text-white px-3 py-1.5 rounded cursor-pointer hover:bg-stone-700"
+            >
+              + Nouveau code
+            </button>
+          </div>
         </div>
 
         {/* Métriques */}
