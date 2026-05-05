@@ -13,8 +13,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Affilybase — Gérez vos affiliés Shopify",
-  description: "Boostez vos ventes Shopify avec un programme d'affiliation simple et puissant.",
+  title: "Affilybase — Programme d'affiliation pour boutiques Shopify",
+  description: "Créez et gérez votre programme d'affiliation Shopify en 5 minutes. Codes promo personnalisés, tracking automatique des ventes, commissions calculées instantanément.",
+  keywords: "affiliation shopify, programme affilié, code promo affilié, marketing affiliation, shopify france",
+  metadataBase: new URL("https://www.affilybase.com"),
+  openGraph: {
+    title: "Affilybase — Programme d'affiliation pour boutiques Shopify",
+    description: "Créez et gérez votre programme d'affiliation Shopify en 5 minutes.",
+    url: "https://www.affilybase.com",
+    siteName: "Affilybase",
+    locale: "fr_FR",
+    type: "website",
+  },
 };
 
 export const viewport = {
