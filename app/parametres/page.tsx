@@ -18,6 +18,10 @@ export default function Parametres() {
   const [logoUrl, setLogoUrl] = useState('')
   const [showResilier, setShowResilier] = useState(false)
   const [resiliating, setResiliating] = useState(false)
+  const [webhookSecret, setWebhookSecret] = useState('')
+  const [copiedId, setCopiedId] = useState(false)
+  const [copiedSecret, setCopiedSecret] = useState(false)
+  const [copiedUrl, setCopiedUrl] = useState(false)
 
   useEffect(() => {
     const init = async () => {
@@ -34,6 +38,14 @@ export default function Parametres() {
         setDevise(v.devise || '€')
         setLogoUrl(v.logo_url || '')
         setTypeBoutique(v.shopify_url ? 'shopify' : 'autre')
+        // Générer un secret si pas encore existant
+        if (v.webhook_secret) {
+          setWebhookSecret(v.webhook_secret)
+        } else {
+          const secret = 'aff_' + Math.random().toString(36).substring(2, 18)
+          setWebhookSecret(secret)
+          await supabase.from('vendeurs').update({ webhook_secret: secret }).eq('id', v.id)
+        }
       }
       setLoading(false)
     }
@@ -79,6 +91,13 @@ export default function Parametres() {
     setResiliating(false)
   }
 
+  const copyToClipboard = (text: string, type: 'id' | 'secret' | 'url') => {
+    navigator.clipboard.writeText(text)
+    if (type === 'id') { setCopiedId(true); setTimeout(() => setCopiedId(false), 2000) }
+    if (type === 'secret') { setCopiedSecret(true); setTimeout(() => setCopiedSecret(false), 2000) }
+    if (type === 'url') { setCopiedUrl(true); setTimeout(() => setCopiedUrl(false), 2000) }
+  }
+
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
       Chargement...
@@ -86,6 +105,7 @@ export default function Parametres() {
   )
 
   const lienAffilie = `affilybase.com/r/${(nom || vendeur?.email?.split('@')[0] || 'maboutique').toUpperCase().replace(/\s/g, '')}`
+  const webhookUrl = `https://affilybase.com/api/woocommerce-sale`
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F5F2EC' }}>
@@ -195,6 +215,76 @@ export default function Parametres() {
             <textarea value={messageAccueil} onChange={e => setMessageAccueil(e.target.value)} rows={3} style={{ width: '100%', padding: '8px 12px', border: '0.5px solid #ddd8ce', borderRadius: '6px', fontSize: '13px', background: '#F5F2EC', outline: 'none', resize: 'vertical', lineHeight: 1.6, boxSizing: 'border-box' }} />
             <div style={{ fontSize: '11px', color: '#aaa', marginTop: '4px' }}>Variables disponibles : [Prénom], [Code], [Commission], [Remise]</div>
           </div>
+        </div>
+
+        {/* WOOCOMMERCE */}
+        <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem', paddingBottom: '8px', borderBottom: '0.5px solid #ddd8ce' }}>
+            <div style={{ fontSize: '13px', fontWeight: 500 }}>Intégration WooCommerce</div>
+            <span style={{ background: '#7F54B3', color: '#fff', fontSize: '10px', padding: '2px 8px', borderRadius: '4px' }}>Plugin gratuit</span>
+          </div>
+
+          <div style={{ fontSize: '12px', color: '#666', lineHeight: 1.6, marginBottom: '1rem' }}>
+            Installez notre plugin WordPress et renseignez ces informations pour connecter votre boutique WooCommerce à Affilybase.
+          </div>
+
+          {/* ID Vendeur */}
+          <div style={{ marginBottom: '12px' }}>
+            <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Votre ID Vendeur</div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ flex: 1, background: '#F5F2EC', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', fontFamily: 'monospace', color: '#1a1a1a', wordBreak: 'break-all' }}>
+                {vendeur?.id}
+              </div>
+              <button onClick={() => copyToClipboard(vendeur?.id, 'id')} style={{ background: copiedId ? '#1D9E75' : '#F5F2EC', color: copiedId ? '#fff' : '#555', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                {copiedId ? '✓ Copié' : 'Copier'}
+              </button>
+            </div>
+          </div>
+
+          {/* Clé secrète */}
+          <div style={{ marginBottom: '12px' }}>
+            <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>Clé secrète</div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ flex: 1, background: '#F5F2EC', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', fontFamily: 'monospace', color: '#1a1a1a', wordBreak: 'break-all' }}>
+                {webhookSecret}
+              </div>
+              <button onClick={() => copyToClipboard(webhookSecret, 'secret')} style={{ background: copiedSecret ? '#1D9E75' : '#F5F2EC', color: copiedSecret ? '#fff' : '#555', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                {copiedSecret ? '✓ Copié' : 'Copier'}
+              </button>
+            </div>
+          </div>
+
+          {/* URL Webhook */}
+          <div style={{ marginBottom: '1rem' }}>
+            <div style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>URL de connexion</div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ flex: 1, background: '#F5F2EC', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', fontFamily: 'monospace', color: '#1a1a1a', wordBreak: 'break-all' }}>
+                {webhookUrl}
+              </div>
+              <button onClick={() => copyToClipboard(webhookUrl, 'url')} style={{ background: copiedUrl ? '#1D9E75' : '#F5F2EC', color: copiedUrl ? '#fff' : '#555', border: '0.5px solid #ddd8ce', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                {copiedUrl ? '✓ Copié' : 'Copier'}
+              </button>
+            </div>
+          </div>
+
+          <div style={{ background: '#E1F5EE', borderRadius: '8px', padding: '10px 14px', marginBottom: '1rem' }}>
+            <div style={{ fontSize: '12px', fontWeight: 500, color: '#085041', marginBottom: '4px' }}>Comment installer le plugin ?</div>
+            {[
+              'Téléchargez le plugin depuis affilybase.com',
+              'WordPress → Extensions → Ajouter → Téléverser le fichier ZIP',
+              'Activez le plugin et collez votre ID Vendeur et votre Clé secrète',
+              'Les ventes WooCommerce apparaîtront automatiquement dans votre dashboard',
+            ].map((step, i) => (
+              <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', marginTop: '6px' }}>
+                <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#1D9E75', color: '#fff', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{i + 1}</div>
+                <div style={{ fontSize: '12px', color: '#0F6E56', lineHeight: 1.5 }}>{step}</div>
+              </div>
+            ))}
+          </div>
+
+          <a href="/affilybase-woocommerce.zip" download style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#7F54B3', color: '#fff', borderRadius: '6px', padding: '8px 16px', fontSize: '12px', fontWeight: 500, textDecoration: 'none' }}>
+            ↓ Télécharger le plugin WooCommerce
+          </a>
         </div>
 
         {/* Compte */}
