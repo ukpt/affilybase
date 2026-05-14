@@ -44,9 +44,9 @@ export default function Landing() {
 
       {/* HERO */}
       <div className="hero-pad">
-        <span style={{ display: 'inline-block', background: '#e0ede7', color: '#1a6645', fontSize: '12px', padding: '4px 14px', borderRadius: '20px', marginBottom: '1.2rem' }}>Compatible Shopify</span>
+        <span style={{ display: 'inline-block', background: '#e0ede7', color: '#1a6645', fontSize: '12px', padding: '4px 14px', borderRadius: '20px', marginBottom: '1.2rem' }}>Compatible Shopify & WooCommerce</span>
         <h1 style={{ fontSize: '30px', fontWeight: 400, lineHeight: 1.4, marginBottom: '1rem' }}>
-          Boostez vos ventes Shopify<br />avec vos <span style={{ background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px' }}>Partenaires</span>
+          Boostez vos ventes<br />avec vos <span style={{ background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px' }}>Partenaires</span>
         </h1>
         <p style={{ fontSize: '14px', color: '#555', lineHeight: 1.8, maxWidth: '700px', margin: '0 auto 2rem' }}>
           Collaborez avec des créateurs, des boutiques partenaires ou vos clients — ils recommandent, vous gagnez en visibilité, vous vendez, ils touchent une commission. Tout le monde gagne.
@@ -234,6 +234,46 @@ export default function Landing() {
         ))}
       </div>
 
+      {/* WOOCOMMERCE */}
+      <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
+      <div className="landing-pad">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
+          <span style={{ display: 'inline-block', background: '#7F54B3', color: '#fff', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500 }}>WooCommerce</span>
+          <span style={{ display: 'inline-block', background: '#e0ede7', color: '#1a6645', padding: '2px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 500 }}>Plugin gratuit</span>
+        </div>
+        <h2 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '0.5rem' }}>Vous utilisez WordPress & WooCommerce ?</h2>
+        <p style={{ fontSize: '13px', color: '#666', lineHeight: 1.7, marginBottom: '1.5rem' }}>Affilybase est aussi compatible WooCommerce. Installez notre plugin gratuit et gérez votre programme d'affiliation en quelques minutes — sans aucune ligne de code.</p>
+
+        <div className="grid-3" style={{ marginBottom: '1.5rem' }}>
+          {[
+            { num: '1', title: 'Téléchargez le plugin', desc: 'Gratuit, léger, sans abonnement supplémentaire. Compatible avec toutes les versions de WooCommerce.' },
+            { num: '2', title: 'Installez en 1 clic', desc: 'Extensions → Ajouter → Téléverser le fichier ZIP. Activez et renseignez votre ID Affilybase.' },
+            { num: '3', title: 'Gérez depuis Affilybase', desc: 'Les ventes WooCommerce apparaissent automatiquement dans votre dashboard. Commissions calculées instantanément.' },
+          ].map(({ num, title, desc }, i) => (
+            <div key={i} style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem' }}>
+              <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#7F54B3', color: '#fff', fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>{num}</div>
+              <h3 style={{ fontSize: '13px', fontWeight: 500, marginBottom: '6px' }}>{title}</h3>
+              <p style={{ fontSize: '12px', color: '#666', lineHeight: 1.6 }}>{desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ background: '#fff', border: '0.5px solid #ddd8ce', borderRadius: '10px', padding: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div>
+            <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px' }}>Plugin Affilybase for WooCommerce</div>
+            <div style={{ fontSize: '12px', color: '#888' }}>Version 1.0.0 · Gratuit · Compatible WooCommerce 6+</div>
+          </div>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <a href="/affilybase-woocommerce.zip" download style={{ background: '#7F54B3', color: '#fff', borderRadius: '6px', padding: '0.6rem 1.2rem', fontSize: '13px', fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              ↓ Télécharger le plugin
+            </a>
+            <a href="/login" style={{ background: '#2D9B6F', color: '#fff', borderRadius: '6px', padding: '0.6rem 1.2rem', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>
+              Créer un compte gratuit →
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* TARIFS */}
       <hr style={{ border: 'none', borderTop: '0.5px solid #ddd8ce' }} />
       <div className="landing-pad">
@@ -313,6 +353,7 @@ export default function Landing() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {[
             ['Est-ce compatible avec toutes les boutiques Shopify ?', "Oui, Affilybase est compatible avec toutes les boutiques Shopify. L'installation prend moins de 5 minutes, sans aucune ligne de code."],
+            ['Est-ce compatible avec WooCommerce ?', "Oui ! Téléchargez notre plugin gratuit et installez-le en quelques clics sur votre site WordPress. Les ventes sont trackées automatiquement."],
             ['Comment est-ce que je paye mes partenaires ?', "Affilybase calcule automatiquement les commissions dues. Au moment du versement, vous choisissez librement votre méthode : virement, PayPal, Lydia ou autre. Vous gardez le contrôle total."],
             ['Mes partenaires peuvent-ils voir leurs commissions en temps réel ?', "Oui. Chaque partenaire a son propre dashboard avec ses ventes, clics et commissions en temps réel."],
             ['Puis-je changer de plan à tout moment ?', "Oui, sans engagement ni pénalité. Aucune carte bancaire requise pour l'essai gratuit."],
@@ -328,8 +369,11 @@ export default function Landing() {
       {/* CTA */}
       <div className="landing-pad" style={{ textAlign: 'center', borderTop: '0.5px solid #ddd8ce' }}>
         <h2 style={{ fontSize: '24px', fontWeight: 400, marginBottom: '0.75rem' }}>Prêt à <span style={{ background: '#d4cfc6', padding: '2px 10px', borderRadius: '4px' }}>booster vos ventes</span> ?</h2>
-        <p style={{ fontSize: '13px', color: '#666', marginBottom: '1.5rem' }}>Rejoignez les boutiques Shopify qui utilisent Affilybase pour vendre plus.</p>
-        <a href="/login" style={{ background: '#2D9B6F', color: '#fff', borderRadius: '6px', padding: '0.85rem 1.75rem', fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}>Commencer gratuitement — sans engagement</a>
+        <p style={{ fontSize: '13px', color: '#666', marginBottom: '1.5rem' }}>Rejoignez les boutiques Shopify et WooCommerce qui utilisent Affilybase pour vendre plus.</p>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <a href="/login" style={{ background: '#2D9B6F', color: '#fff', borderRadius: '6px', padding: '0.85rem 1.75rem', fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}>Commencer gratuitement — sans engagement</a>
+          <a href="/affilybase-woocommerce.zip" download style={{ background: '#7F54B3', color: '#fff', borderRadius: '6px', padding: '0.85rem 1.75rem', fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}>↓ Plugin WooCommerce</a>
+        </div>
       </div>
 
       {/* FOOTER */}
