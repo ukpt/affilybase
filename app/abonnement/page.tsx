@@ -1,9 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Abonnement() {
   const [loading, setLoading] = useState<string | null>(null)
+  const [isShopify, setIsShopify] = useState(false)
+  const [shop, setShop] = useState<string | null>(null)
+  const [accessToken, setAccessToken] = useState<string | null>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const shopParam = params.get('shop')
+    const tokenParam = params.get('access_token')
+    if (shopParam) {
+      setIsShopify(true)
+      setShop(shopParam)
+      setAccessToken(tokenParam)
+    }
+  }, [])
 
   const handleSubscribe = async (plan: string) => {
     if (plan === 'free') {
@@ -12,16 +26,35 @@ export default function Abonnement() {
     }
     setLoading(plan)
     try {
-      const res = await fetch('/api/stripe-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan })
-      })
-      const data = await res.json()
-      if (data.url) {
-        window.location.href = data.url
+      if (isShopify && shop) {
+        // Shopify Billing API
+        const res = await fetch('/api/shopify-billing', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': accessToken || '',
+          },
+          body: JSON.stringify({ shop, plan })
+        })
+        const data = await res.json()
+        if (data.confirmationUrl) {
+          window.location.href = data.confirmationUrl
+        } else {
+          alert('Erreur : ' + (data.error || 'inconnue'))
+        }
       } else {
-        alert('Erreur : ' + (data.error || 'inconnue'))
+        // Stripe pour les vendeurs non-Shopify
+        const res = await fetch('/api/stripe-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan })
+        })
+        const data = await res.json()
+        if (data.url) {
+          window.location.href = data.url
+        } else {
+          alert('Erreur : ' + (data.error || 'inconnue'))
+        }
       }
     } catch (e) {
       alert('Erreur de connexion')
@@ -84,6 +117,11 @@ export default function Abonnement() {
           </div>
           <h1 className="text-2xl font-medium text-stone-900 mb-3">Choisissez votre plan</h1>
           <p className="text-stone-500 text-sm">Commencez gratuitement — passez à un plan payant quand vous êtes prêt</p>
+          {isShopify && (
+            <div style={{ background: '#E1F5EE', border: '0.5px solid #9FE1CB', borderRadius: '8px', padding: '8px 16px', display: 'inline-block', marginTop: '12px' }}>
+              <span style={{ fontSize: '12px', color: '#085041' }}>✓ Paiement sécurisé via Shopify pour {shop}</span>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-4 gap-4">
@@ -135,7 +173,10 @@ export default function Abonnement() {
         </div>
 
         <p className="text-center text-xs text-stone-400 mt-8">
-          Paiement sécurisé par Stripe · Annulation à tout moment · Sans engagement
+          {isShopify
+            ? 'Paiement sécurisé par Shopify · Annulation à tout moment · Sans engagement'
+            : 'Paiement sécurisé par Stripe · Annulation à tout moment · Sans engagement'
+          }
         </p>
 
       </div>
