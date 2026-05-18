@@ -212,8 +212,9 @@ const articles: Record<string, any> = {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const article = articles[params.slug]
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const article = articles[slug]
   if (!article) return {}
   return {
     title: article.titre + ' — Blog Affilybase',
@@ -221,8 +222,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default function Article({ params }: { params: { slug: string } }) {
-  const article = articles[params.slug]
+export default async function Article({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const article = articles[slug]
   if (!article) notFound()
 
   return (
